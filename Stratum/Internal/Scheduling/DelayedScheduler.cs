@@ -13,8 +13,8 @@ namespace Stratum.Internal.Scheduling
 	{
 		private readonly CoroutineStarter _startCoroutine;
 
-		public DelayedScheduler(ManualLogSource logger, DependencyEnumerable<IStratumPlugin> mods, CoroutineStarter startCoroutine)
-			: base(logger, mods)
+		public DelayedScheduler(ManualLogSource logger, DependencyEnumerable<IStratumPlugin> plugins, CoroutineStarter startCoroutine)
+			: base(logger, plugins)
 		{
 			_startCoroutine = startCoroutine;
 		}
@@ -23,12 +23,12 @@ namespace Stratum.Internal.Scheduling
 		{
 			var concurrent = new Stack<Coroutine>();
 
-			foreach (var batch in Mods)
+			foreach (var batch in Plugins)
 			{
 				// Start batch
-				foreach (var mod in batch)
+				foreach (var plugin in batch)
 				{
-					var pipeline = stage.Run(mod.Metadata).TryCatch(e => ContextException(mod, stage, e));
+					var pipeline = stage.Run(plugin.Metadata).TryCatch(e => ContextException(plugin, stage, e));
 					var coroutine = _startCoroutine(pipeline);
 
 					concurrent.Push(coroutine);

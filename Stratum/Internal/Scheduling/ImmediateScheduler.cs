@@ -8,20 +8,20 @@ namespace Stratum.Internal.Scheduling
 {
 	internal sealed class ImmediateScheduler : Scheduler<Empty>
 	{
-		public ImmediateScheduler(ManualLogSource logger, DependencyEnumerable<IStratumPlugin> mods) : base(logger, mods)
+		public ImmediateScheduler(ManualLogSource logger, DependencyEnumerable<IStratumPlugin> plugins) : base(logger, plugins)
 		{
 		}
 
 		public override Empty Run(Stage<Empty> stage)
 		{
-			foreach (var mod in Mods.SelectMany(v => v))
+			foreach (var plugin in Plugins.SelectMany(v => v))
 				try
 				{
-					stage.Run(mod.Metadata);
+					stage.Run(plugin.Metadata);
 				}
 				catch (Exception e)
 				{
-					ContextException(mod, stage, e);
+					ContextException(plugin, stage, e);
 				}
 
 			return new();

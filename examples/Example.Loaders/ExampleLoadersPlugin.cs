@@ -12,7 +12,7 @@ namespace Example.Loaders
 	[BepInDependency(StratumRoot.GUID, StratumRoot.Version)]
 	[BepInDependency(LibraryGUID, StratumRoot.Version)]
 	// You MUST add attributes that denote what loaders you add and what stage you add them to.
-	// Failure to do this results in an exception that will kill your mod (and any that depend on it, of course)
+	// Failure to do this results in an exception that will kill your plugin (and any that depend on it, of course)
 	[StratumLoader(Stages.Setup, PrintLoaderName)]
 	[StratumLoader(Stages.Runtime, PrintLoaderName)]
 	public class ExampleLoadersPlugin : StratumPlugin
