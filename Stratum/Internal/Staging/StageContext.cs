@@ -9,7 +9,7 @@ namespace Stratum.Internal.Staging
 	{
 		private IStage<TRet>? _stage;
 		private IStratumPlugin? _plugin;
-		private DisposableDictionary<string, Loader<TRet>>? _loaders = new();
+		private LoaderDictionary<TRet>? _loaders = new();
 		private ReaderCollection? _readers = new();
 		private WriterCollection? _writers = new();
 
