@@ -1,6 +1,4 @@
 using System;
-using System.IO;
-using Stratum.Extensions;
 
 namespace Stratum.Assets
 {
@@ -14,15 +12,6 @@ namespace Stratum.Assets
 		{
 			Path = path;
 			Loader = loader;
-		}
-
-		public AssetDefinition<TRet> Resolve<TRet>(IStage<TRet> stage, DirectoryInfo root)
-		{
-			var loader = Loader.Resolve(stage);
-			var handle = root.GetChild(Path) ?? throw
-				new FileNotFoundException($"No file/directory existed at path {Path} (root: {root})");
-
-			return new(handle, loader);
 		}
 
 		public bool Equals(AssetReference other) => Path == other.Path && Loader.Equals(other.Loader);
