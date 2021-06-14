@@ -1,11 +1,18 @@
 using System;
-using System.Collections.Generic;
-using Stratum.IO;
 
 namespace Stratum.Assets
 {
 	public readonly struct LoaderReference : IEquatable<LoaderReference>
 	{
+		public static LoaderReference Parse(string raw)
+		{
+			var split = raw.Split(new[] { "::" }, StringSplitOptions.RemoveEmptyEntries);
+			if (split.Length != 2)
+				throw new FormatException("Loader references must be the mod GUID and loader name, seperated by a double colon (::).");
+
+			return new(split[0], split[1]);
+		}
+
 		public string Plugin { get; }
 
 		public string Name { get; }
