@@ -1,18 +1,11 @@
 using System;
+using System.Collections.Generic;
+using Stratum.IO;
 
 namespace Stratum.Assets
 {
 	public readonly struct LoaderReference : IEquatable<LoaderReference>
 	{
-		public static LoaderReference Parse(string raw)
-		{
-			var split = raw.Split(new[] { "::" }, StringSplitOptions.RemoveEmptyEntries);
-			if (split.Length != 2)
-				throw new FormatException("Loader references must be the mod GUID and loader name, seperated by a double colon (::).");
-
-			return new(split[0], split[1]);
-		}
-
 		public string Plugin { get; }
 
 		public string Name { get; }
@@ -21,6 +14,14 @@ namespace Stratum.Assets
 		{
 			Plugin = plugin;
 			Name = name;
+		}
+
+		public Loader<TRet> Resolve<TRet>(IStage<TRet> stage)
+		{
+			if (!stage[Plugin].Loaders.TryGetValue(Name, out var resolved))
+				throw new KeyNotFoundException($"The plugin with GUID '{Plugin}' did not have the loader named '{Name}'");
+
+			return resolved;
 		}
 
 		public bool Equals(LoaderReference other) => Plugin == other.Plugin && Name == other.Name;
@@ -35,6 +36,6 @@ namespace Stratum.Assets
 			}
 		}
 
-		public override string ToString() => $"{Plugin}::{Name}";
+		public override string ToString() => $"{Plugin}:{Name}";
 	}
 }

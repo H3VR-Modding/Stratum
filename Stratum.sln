@@ -13,8 +13,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.Assets", "examples\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{A02C0767-3140-4212-9997-43FF2B5C01FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stratum.Meta", "Stratum.Meta\Stratum.Meta.csproj", "{A020A6EA-205B-4E6A-BDA1-B1D2898D047C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -76,18 +74,6 @@ Global
 		{D5D992A9-21F7-49D7-A809-2EDAC12634B2}.Release|x64.Build.0 = Release|Any CPU
 		{D5D992A9-21F7-49D7-A809-2EDAC12634B2}.Release|x86.ActiveCfg = Release|Any CPU
 		{D5D992A9-21F7-49D7-A809-2EDAC12634B2}.Release|x86.Build.0 = Release|Any CPU
-		{A020A6EA-205B-4E6A-BDA1-B1D2898D047C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A020A6EA-205B-4E6A-BDA1-B1D2898D047C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A020A6EA-205B-4E6A-BDA1-B1D2898D047C}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{A020A6EA-205B-4E6A-BDA1-B1D2898D047C}.Debug|x64.Build.0 = Debug|Any CPU
-		{A020A6EA-205B-4E6A-BDA1-B1D2898D047C}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{A020A6EA-205B-4E6A-BDA1-B1D2898D047C}.Debug|x86.Build.0 = Debug|Any CPU
-		{A020A6EA-205B-4E6A-BDA1-B1D2898D047C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A020A6EA-205B-4E6A-BDA1-B1D2898D047C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A020A6EA-205B-4E6A-BDA1-B1D2898D047C}.Release|x64.ActiveCfg = Release|Any CPU
-		{A020A6EA-205B-4E6A-BDA1-B1D2898D047C}.Release|x64.Build.0 = Release|Any CPU
-		{A020A6EA-205B-4E6A-BDA1-B1D2898D047C}.Release|x86.ActiveCfg = Release|Any CPU
-		{A020A6EA-205B-4E6A-BDA1-B1D2898D047C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D5D992A9-21F7-49D7-A809-2EDAC12634B2} = {A02C0767-3140-4212-9997-43FF2B5C01FB}
