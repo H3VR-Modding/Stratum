@@ -13,7 +13,7 @@ namespace Stratum
 	[BepInPlugin(GUID, "Stratum", Version)]
 	public sealed class StratumRoot : BaseUnityPlugin
 	{
-		public const string GUID = "stratum.stratum";
+		public const string GUID = "stratum";
 		public const string Version = "1.0.0";
 
 		private static StratumRoot? _instance;
