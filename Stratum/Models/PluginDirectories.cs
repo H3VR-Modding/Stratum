@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Stratum.IO
+namespace Stratum
 {
 	public sealed class PluginDirectories
 	{

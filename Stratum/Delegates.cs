@@ -1,9 +1,10 @@
 using System.Collections;
+using System.IO;
 using UnityEngine;
 
-namespace Stratum.Coroutines
+namespace Stratum
 {
-	public delegate IEnumerator ResultEnumeratorBody<out T>(IRet<T> ret);
+	public delegate TRet Loader<out TRet>(FileSystemInfo handle);
 
 	public delegate Coroutine CoroutineStarter(IEnumerator coroutine);
 }

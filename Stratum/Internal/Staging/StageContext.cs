@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Stratum.Internal.IO;
-using Stratum.IO;
 
 namespace Stratum.Internal.Staging
 {
@@ -10,8 +9,6 @@ namespace Stratum.Internal.Staging
 		private IStage<TRet>? _stage;
 		private IStratumPlugin? _plugin;
 		private LoaderDictionary<TRet>? _loaders = new();
-		private ReaderCollection? _readers = new();
-		private WriterCollection? _writers = new();
 
 		private bool _frozen;
 
@@ -22,12 +19,6 @@ namespace Stratum.Internal.Staging
 
 		public IDictionary<string, Loader<TRet>> Loaders => FreezeRet(_loaders);
 		IReadOnlyDictionary<string, Loader<TRet>> IReadOnlyStageContext<TRet>.Loaders => DisposeRet(_loaders);
-
-		public IReaderCollection Readers => FreezeRet(_readers);
-		IReadOnlyReaderCollection IReadOnlyStageContext<TRet>.Readers => DisposeRet(_readers);
-
-		public IWriterCollection Writers => FreezeRet(_writers);
-		IReadOnlyWriterCollection IReadOnlyStageContext<TRet>.Writers => DisposeRet(_writers);
 
 		public StageContext(IStage<TRet> stage, IStratumPlugin plugin)
 		{
@@ -42,8 +33,6 @@ namespace Stratum.Internal.Staging
 		public void Freeze()
 		{
 			_loaders?.Freeze();
-			_readers?.Freeze();
-			_writers?.Freeze();
 
 			_frozen = true;
 		}
@@ -51,14 +40,10 @@ namespace Stratum.Internal.Staging
 		public void Dispose()
 		{
 			_loaders?.Dispose();
-			_readers?.Dispose();
-			_writers?.Dispose();
 
 			_stage = null;
 			_plugin = null;
 			_loaders = null;
-			_readers = null;
-			_writers = null;
 		}
 	}
 }

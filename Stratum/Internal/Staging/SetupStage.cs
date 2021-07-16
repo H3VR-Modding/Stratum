@@ -5,7 +5,7 @@ namespace Stratum.Internal.Staging
 {
 	internal sealed class SetupStage : Stage<Empty>
 	{
-		public override Stages StageType => Stages.Setup;
+		public override Stages Variant => Stages.Setup;
 
 		public SetupStage(int count, ManualLogSource logger) : base(count, logger)
 		{

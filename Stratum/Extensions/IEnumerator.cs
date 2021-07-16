@@ -5,7 +5,8 @@ namespace Stratum.Extensions
 {
 	public static class ExtIEnumerator
 	{
-		public static IEnumerator GetEnumerator(this IEnumerator enumerator) => enumerator;
+		// This looks goofy but it allows enumerators to be foreach'd, which is actually very helpful
+		public static IEnumerator GetEnumerator(this IEnumerator @this) => @this;
 
 		public static IEnumerator TryFinally(this IEnumerator @this, Action @finally)
 		{

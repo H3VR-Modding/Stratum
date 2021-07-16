@@ -1,6 +1,6 @@
 using System;
 
-namespace Stratum.IO
+namespace Stratum
 {
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 	public sealed class StratumLoaderAttribute : Attribute, IEquatable<StratumLoaderAttribute>

@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using Stratum.Extensions;
 
-namespace Stratum.Assets
+namespace Stratum.Jobs
 {
 	public readonly struct AssetReference : IEquatable<AssetReference>
 	{

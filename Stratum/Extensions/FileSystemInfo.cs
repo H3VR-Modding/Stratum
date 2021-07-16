@@ -5,10 +5,10 @@ namespace Stratum.Extensions
 {
 	public static class ExtFileSystemInfo
 	{
-		public static FileInfo RequireFile(this FileSystemInfo @this) =>
+		public static FileInfo ConsumeFile(this FileSystemInfo @this) =>
 			@this as FileInfo ?? throw new ArgumentException("Handle must be a file.");
 
-		public static DirectoryInfo RequireDirectory(this FileSystemInfo @this) =>
+		public static DirectoryInfo ConsumeDirectory(this FileSystemInfo @this) =>
 			@this as DirectoryInfo ?? throw new ArgumentException("Handle must be a directory.");
 	}
 }

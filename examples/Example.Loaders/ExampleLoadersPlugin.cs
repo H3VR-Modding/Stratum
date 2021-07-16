@@ -4,21 +4,32 @@ using System.IO;
 using BepInEx;
 using Stratum;
 using Stratum.Extensions;
-using Stratum.IO;
 
 namespace Example.Loaders
 {
 	[BepInPlugin("stratum.example.loaders", "Stratum Example (Loaders)", StratumRoot.Version)]
 	[BepInDependency(StratumRoot.GUID, StratumRoot.Version)]
-	[BepInDependency(LibraryGUID, StratumRoot.Version)]
 	// You MUST add attributes that denote what loaders you add and what stage you add them to.
 	// Failure to do this results in an exception that will kill your plugin (and any that depend on it, of course)
 	[StratumLoader(Stages.Setup, PrintLoaderName)]
 	[StratumLoader(Stages.Runtime, PrintLoaderName)]
 	public class ExampleLoadersPlugin : StratumPlugin
 	{
-		private const string LibraryGUID = "stratum.example.library";
 		private const string PrintLoaderName = "print";
+
+		#region Readers/Writers
+
+		private static string StringReader(FileInfo file) => File.ReadAllText(file.FullName);
+
+		private static void StringWriter(FileInfo file, string value) => File.WriteAllText(file.FullName, value);
+
+		private static int IntReader(FileInfo file) => int.Parse(StringReader(file));
+
+		private static void IntWriter(FileInfo file, int value) => StringWriter(file, value.ToString());
+
+		private static string[] StringsReader(FileInfo file) => File.ReadAllLines(file.FullName);
+
+		#endregion
 
 		private readonly FileInfo _framesFile;
 
@@ -33,34 +44,37 @@ namespace Example.Loaders
 
 		public override void OnSetup(IStageContext<Empty> ctx)
 		{
-			var lib = ctx.Stage[LibraryGUID];
-
-			var stringReader = lib.Readers.Get<string>();
 			Empty PrintLoader(FileSystemInfo handle)
 			{
 				// Read a string from the file, which asserts that the handle is a file.
-				var message = stringReader(handle.RequireFile());
+				var message = StringReader(handle.ConsumeFile());
 				Logger.LogMessage($"A message was loaded at setup: {message}");
 
 				return new();
 			}
 
-			// Add loader Setup/stratum.example.loaders::print
+			// Add loader Setup/stratum.example.loaders:print
 			ctx.Loaders.Add(PrintLoaderName, PrintLoader);
 		}
 
-		private void InitFrames(IReadOnlyStageContext<IEnumerator> lib)
+		public override IEnumerator OnRuntime(IStageContext<IEnumerator> ctx)
 		{
-			var intWriter = lib.Writers.Get<int, Empty>();
+			InitFrames();
+			InitLoader(ctx);
 
+			yield break;
+		}
+
+		private void OnDestroy() => OnDestroyed?.Invoke();
+
+		private void InitFrames()
+		{
 			if (_framesFile.Exists)
 			{
-				var intReader = lib.Readers.Get<int>();
-
-				_frames = intReader(_framesFile);
+				_frames = IntReader(_framesFile);
 			}
 
-			void WriteFrames() => intWriter(_framesFile, _frames);
+			void WriteFrames() => IntWriter(_framesFile, _frames);
 
 			IEnumerator IterateFrames()
 			{
@@ -80,33 +94,19 @@ namespace Example.Loaders
 			OnDestroyed += WriteFrames;
 		}
 
-		private void InitLoader(IStageContext<IEnumerator> ctx, IReadOnlyStageContext<IEnumerator> lib)
+		private void InitLoader(IStageContext<IEnumerator> ctx)
 		{
-			var multilineReader = lib.Readers.Get<string[]>();
-
 			IEnumerator PrintLoader(FileSystemInfo handle)
 			{
-				foreach (var message in multilineReader(handle.RequireFile()))
+				foreach (var message in StringsReader(handle.ConsumeFile()))
 				{
 					Logger.LogMessage($"A message was loaded at runtime (frame: {_frames}): {message}");
 					yield return null;
 				}
 			}
 
-			// Add loader Runtime/stratum.example.loaders::print
+			// Add loader Runtime/stratum.example.loaders:print
 			ctx.Loaders.Add(PrintLoaderName, PrintLoader);
 		}
-
-		public override IEnumerator OnRuntime(IStageContext<IEnumerator> ctx)
-		{
-			var lib = ctx.Stage[LibraryGUID];
-
-			InitFrames(lib);
-			InitLoader(ctx, lib);
-
-			yield break;
-		}
-
-		private void OnDestroy() => OnDestroyed?.Invoke();
 	}
 }

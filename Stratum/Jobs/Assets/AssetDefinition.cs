@@ -1,8 +1,7 @@
 using System;
 using System.IO;
-using Stratum.IO;
 
-namespace Stratum.Assets
+namespace Stratum.Jobs
 {
 	public readonly struct AssetDefinition<TRet> : IEquatable<AssetDefinition<TRet>>
 	{

@@ -2,18 +2,17 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Stratum.IO;
 
 namespace Stratum.Internal.IO
 {
 	// Non-generic as to not bloat statics
 	internal static class LoaderDictionary
 	{
-		private static readonly Regex _loaderRegex = new(@"^[a-zA-Z0-9\._\-]+$");
+		private static readonly Regex LoaderRegex = new(@"^[a-zA-Z0-9\._\-]+$");
 
 		public static void ValidateKey(string key)
 		{
-			if (!_loaderRegex.IsMatch(key))
+			if (!LoaderRegex.IsMatch(key))
 				throw new FormatException("Loader names can only contain the following characters: a-z A-Z 0-9 . _ -");
 		}
 	}

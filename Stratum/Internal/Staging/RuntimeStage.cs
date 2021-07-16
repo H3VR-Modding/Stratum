@@ -9,7 +9,7 @@ namespace Stratum.Internal.Staging
 	{
 		public RuntimeStage(int count, ManualLogSource logger) : base(count, logger) { }
 
-		public override Stages StageType => Stages.Runtime;
+		public override Stages Variant => Stages.Runtime;
 
 		protected override IEnumerator BeginRun(StageContext<IEnumerator> ctx)
 		{

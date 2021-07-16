@@ -4,7 +4,7 @@ namespace Stratum
 {
 	public interface IStage<TRet> : IEnumerable<IReadOnlyStageContext<TRet>>
 	{
-		Stages StageType { get; }
+		Stages Variant { get; }
 
 		IReadOnlyStageContext<TRet>? TryGet(string guid);
 

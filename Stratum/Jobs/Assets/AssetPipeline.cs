@@ -2,12 +2,11 @@ using System;
 using System.Collections;
 using System.IO;
 using BepInEx.Logging;
-using Stratum.Coroutines;
 using Stratum.Extensions;
 using Stratum.Jobs;
 using UnityEngine;
 
-namespace Stratum.Assets
+namespace Stratum.Jobs
 {
 	public sealed class AssetPipeline<TRet> : Pipeline<TRet, AssetPipeline<TRet>>
 	{

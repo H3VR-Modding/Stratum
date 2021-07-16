@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using BepInEx.Logging;
-using Stratum.Coroutines;
 using Stratum.Extensions;
 using Stratum.Internal.Dependencies;
 using Stratum.Internal.Staging;

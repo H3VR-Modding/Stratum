@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using BepInEx.Logging;
-using Stratum.IO;
 
 namespace Stratum.Internal.Staging
 {
@@ -13,15 +12,15 @@ namespace Stratum.Internal.Staging
 
 		private Dictionary<string, StageContext<TRet>> Contexts =>
 			_contexts ?? throw new ObjectDisposedException(GetType().FullName);
-		
+
 		protected ManualLogSource Logger { get; }
 
-		public abstract Stages StageType { get; }
+		public abstract Stages Variant { get; }
 
 		protected Stage(int count, ManualLogSource logger)
 		{
 			_contexts = new Dictionary<string, StageContext<TRet>>(count);
-			
+
 			Logger = logger;
 		}
 
@@ -37,7 +36,7 @@ namespace Stratum.Internal.Staging
 			var attributes = plugin.GetType()
 				.GetCustomAttributes(typeof(StratumLoaderAttribute), true)
 				.Cast<StratumLoaderAttribute>()
-				.Where(v => v.Stage == StageType)
+				.Where(v => v.Stage == Variant)
 				.Select(v => v.Name)
 				.ToList();
 			var loaders = rctx.Loaders.Select(v => v.Key).ToList();
@@ -65,8 +64,8 @@ namespace Stratum.Internal.Staging
 
 		public TRet Run(IStratumPlugin plugin)
 		{
-			Logger.LogDebug($"Loading {plugin.Info} -> {StageType}");
-			
+			Logger.LogDebug($"Loading {plugin.Info} -> {Variant}");
+
 			return BeginRun(new StageContext<TRet>(this, plugin));
 		}
 
@@ -92,6 +91,6 @@ namespace Stratum.Internal.Staging
 			_contexts = null;
 		}
 
-		public override string ToString() => StageType.ToString();
+		public override string ToString() => Variant.ToString();
 	}
 }

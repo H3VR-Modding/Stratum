@@ -60,7 +60,7 @@ namespace Stratum
 				foreach (var reference in info.Dependencies)
 				{
 					// This is unintuitive, but let me explain. This means either/both:
-					// 1. The dependency is soft, because BepInEx didn't load it and BepInEx wouldn't load a hard-dependent.
+					// 1. The dependency is soft, because BepInEx didn't load it and BepInEx would load a hard-dependent.
 					// 2. The plugin isn't a Stratum plugin, because it never injected.
 					// In either situation, we don't care.
 					if (!nodes.TryGetValue(reference.DependencyGUID, out var resolved))

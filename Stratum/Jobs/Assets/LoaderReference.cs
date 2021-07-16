@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Stratum.IO;
 
-namespace Stratum.Assets
+namespace Stratum.Jobs
 {
 	public readonly struct LoaderReference : IEquatable<LoaderReference>
 	{
