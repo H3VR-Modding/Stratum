@@ -15,11 +15,20 @@ namespace Stratum.Jobs
 			Loader = loader;
 		}
 
-		public TRet Run() => Loader(Handle);
+		public TRet Run()
+		{
+			return Loader(Handle);
+		}
 
-		public bool Equals(AssetDefinition<TRet> other) => Handle.Equals(other.Handle) && Loader.Equals(other.Loader);
+		public bool Equals(AssetDefinition<TRet> other)
+		{
+			return Handle.Equals(other.Handle) && Loader.Equals(other.Loader);
+		}
 
-		public override bool Equals(object? obj) => obj is AssetDefinition<TRet> other && Equals(other);
+		public override bool Equals(object? obj)
+		{
+			return obj is AssetDefinition<TRet> other && Equals(other);
+		}
 
 		public override int GetHashCode()
 		{
@@ -29,6 +38,9 @@ namespace Stratum.Jobs
 			}
 		}
 
-		public override string ToString() => $"[<{typeof(TRet)}> '{Handle}']";
+		public override string ToString()
+		{
+			return $"[<{typeof(TRet)}> '{Handle}']";
+		}
 	}
 }

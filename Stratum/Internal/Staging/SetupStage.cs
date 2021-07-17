@@ -5,15 +5,13 @@ namespace Stratum.Internal.Staging
 {
 	internal sealed class SetupStage : Stage<Empty>
 	{
-		public override Stages Variant => Stages.Setup;
+		public SetupStage(int count, ManualLogSource logger) : base(count, logger) { }
 
-		public SetupStage(int count, ManualLogSource logger) : base(count, logger)
-		{
-		}
+		public override Stages Variant => Stages.Setup;
 
 		protected override Empty BeginRun(StageContext<Empty> ctx)
 		{
-			var plugin = ctx.Plugin;
+			IStratumPlugin plugin = ctx.Plugin;
 
 			try
 			{
@@ -27,7 +25,7 @@ namespace Stratum.Internal.Staging
 			// Do try-finally this. Context should only be added through a successful load.
 			EndRun(ctx);
 
-			return new();
+			return new Empty();
 		}
 	}
 }

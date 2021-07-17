@@ -8,21 +8,36 @@ namespace Stratum.Internal.Dependencies
 	{
 		private readonly Node[] _nodes;
 
-		public int Count => _nodes.Length;
-
-		private Graph(Node[] nodes) => _nodes = nodes;
+		private Graph(Node[] nodes)
+		{
+			_nodes = nodes;
+		}
 
 		public Graph(IList<TNode> metadata)
 		{
 			_nodes = new Node[metadata.Count];
 			for (var i = 0; i < _nodes.Length; ++i)
-				_nodes[i] = new(this, i, metadata[i]);
+				_nodes[i] = new Node(this, i, metadata[i]);
+		}
+
+		public int Count => _nodes.Length;
+
+		public Node this[int item] => _nodes[item];
+
+		public IEnumerator<Node> GetEnumerator()
+		{
+			return ((IEnumerable<Node>) _nodes).GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
 		}
 
 		public Graph<TNode, TEdge> Copy()
 		{
 			var nodes = new Node[_nodes.Length];
-			var graph = new Graph<TNode, TEdge>(nodes);
+			Graph<TNode, TEdge> graph = new(nodes);
 
 			for (var i = 0; i < nodes.Length; ++i)
 				nodes[i] = _nodes[i].Copy(graph);
@@ -35,7 +50,7 @@ namespace Stratum.Internal.Dependencies
 			if (!history.Add(node.Value))
 				return false;
 
-			foreach (var next in node.Outgoing)
+			foreach (Edge next in node.Outgoing)
 				if (!Acyclic(history, next.To))
 					return false;
 
@@ -46,7 +61,7 @@ namespace Stratum.Internal.Dependencies
 
 		public bool Acyclic()
 		{
-			var history = new HashSet<int>();
+			HashSet<int> history = new();
 
 			foreach (var node in this)
 			{
@@ -59,47 +74,19 @@ namespace Stratum.Internal.Dependencies
 			return true;
 		}
 
-		public Node this[int item] => _nodes[item];
-
-		public IEnumerator<Node> GetEnumerator() => ((IEnumerable<Node>) _nodes).GetEnumerator();
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
 		public class Node
 		{
-			private static Dictionary<int, TEdge> Copy(Dictionary<int, TEdge> source) =>
-				source.ToDictionary(v => v.Key, v => v.Value);
+			private static Dictionary<int, TEdge> Copy(Dictionary<int, TEdge> source)
+			{
+				return source.ToDictionary(v => v.Key, v => v.Value);
+			}
 
 			private readonly Graph<TNode, TEdge> _graph;
 			private readonly Dictionary<int, TEdge> _incoming;
 			private readonly Dictionary<int, TEdge> _outgoing;
 
-			public int Value { get; }
-
-			public TNode Metadata { get; }
-
-			public IEnumerable<Edge> Incoming
-			{
-				get
-				{
-					foreach (var item in _incoming)
-						yield return new(_graph[item.Key], this, item.Value);
-				}
-			}
-
-			public int IncomingCount => _incoming.Count;
-
-			public IEnumerable<Edge> Outgoing
-			{
-				get
-				{
-					foreach (var item in _outgoing)
-						yield return new(this, _graph[item.Key], item.Value);
-				}
-			}
-
-			public int OutgoingCount => _outgoing.Count;
-
-			private Node(Graph<TNode, TEdge> graph, Dictionary<int, TEdge> incoming, Dictionary<int, TEdge> outgoing, int value, TNode metadata)
+			private Node(Graph<TNode, TEdge> graph, Dictionary<int, TEdge> incoming, Dictionary<int, TEdge> outgoing, int value,
+				TNode metadata)
 			{
 				_graph = graph;
 				_incoming = incoming;
@@ -112,15 +99,43 @@ namespace Stratum.Internal.Dependencies
 			public Node(Graph<TNode, TEdge> graph, int value, TNode metadata)
 			{
 				_graph = graph;
-				_incoming = new();
-				_outgoing = new();
+				_incoming = new Dictionary<int, TEdge>();
+				_outgoing = new Dictionary<int, TEdge>();
 
 				Value = value;
 				Metadata = metadata;
 			}
 
-			public Node Copy(Graph<TNode, TEdge> graph) =>
-				new(graph, Copy(_incoming), Copy(_outgoing), Value, Metadata);
+			public int Value { get; }
+
+			public TNode Metadata { get; }
+
+			public IEnumerable<Edge> Incoming
+			{
+				get
+				{
+					foreach (KeyValuePair<int, TEdge> item in _incoming)
+						yield return new Edge(_graph[item.Key], this, item.Value);
+				}
+			}
+
+			public int IncomingCount => _incoming.Count;
+
+			public IEnumerable<Edge> Outgoing
+			{
+				get
+				{
+					foreach (KeyValuePair<int, TEdge> item in _outgoing)
+						yield return new Edge(this, _graph[item.Key], item.Value);
+				}
+			}
+
+			public int OutgoingCount => _outgoing.Count;
+
+			public Node Copy(Graph<TNode, TEdge> graph)
+			{
+				return new(graph, Copy(_incoming), Copy(_outgoing), Value, Metadata);
+			}
 
 			public void Attach(Node node, TEdge metadata)
 			{
@@ -134,7 +149,10 @@ namespace Stratum.Internal.Dependencies
 				_outgoing.Remove(node.Value);
 			}
 
-			public override string ToString() => $"{Value} ({Metadata})";
+			public override string ToString()
+			{
+				return $"{Value} ({Metadata})";
+			}
 
 			public void Abandon()
 			{
@@ -158,7 +176,10 @@ namespace Stratum.Internal.Dependencies
 				Metadata = metadata;
 			}
 
-			public override string ToString() => $"{From} --({Metadata})-> {To}";
+			public override string ToString()
+			{
+				return $"{From} --({Metadata})-> {To}";
+			}
 		}
 	}
 }

@@ -6,98 +6,104 @@ namespace Stratum.Internal.Dependencies
 {
 	internal class DependencyEnumerable<TNode> : IEnumerable<IEnumerable<Graph<TNode, bool>.Node>>
 	{
-	    private readonly Graph<TNode, bool> _graph;
-	    private readonly bool[] _dead;
+		private readonly bool[] _dead;
+		private readonly Graph<TNode, bool> _graph;
 
-	    public int Count => _graph.Count;
+		public DependencyEnumerable(Graph<TNode, bool> graph)
+		{
+			if (!graph.Acyclic())
+				throw new ArgumentException("Graph must be acyclic", nameof(graph));
 
-	    public DependencyEnumerable(Graph<TNode, bool> graph)
-	    {
-	        if (!graph.Acyclic())
-	            throw new ArgumentException("Graph must be acyclic", nameof(graph));
+			_graph = graph.Copy();
+			_dead = new bool[_graph.Count];
+		}
 
-	        _graph = graph.Copy();
-	        _dead = new bool[_graph.Count];
-	    }
+		public DependencyEnumerable(Graph<TNode, bool> graph, bool[] dead) : this(graph)
+		{
+			if (graph.Count != dead.Length)
+				throw new ArgumentException("The dead array must be as long as the count of the graph.");
 
-	    public DependencyEnumerable(Graph<TNode, bool> graph, bool[] dead) : this(graph)
-	    {
-		    if (graph.Count != dead.Length)
-			    throw new ArgumentException("The dead array must be as long as the count of the graph.");
+			_dead = dead;
+		}
 
-		    _dead = dead;
-	    }
+		public int Count => _graph.Count;
 
-	    public DependencyEnumerable<TNode> Copy() => new(_graph);
+		// Kahn's algorithm, adjusted to yield batches and allow for killing.
+		public IEnumerator<IEnumerable<Graph<TNode, bool>.Node>> GetEnumerator()
+		{
+			Graph<TNode, bool> graph = _graph.Copy();
+			List<Graph<TNode, bool>.Node> set = new(graph.Count);
+			List<Graph<TNode, bool>.Edge> incomingEdges = new(graph.Count);
 
-	    private void Kill(Graph<TNode, bool>.Node node, HashSet<Graph<TNode, bool>.Node> killed)
-	    {
-	        killed.Add(node);
+			foreach (var node in graph)
+				if (!_dead[node.Value] && node.OutgoingCount == 0)
+					set.Add(node);
 
-	        _dead[node.Value] = true;
+			while (set.Count > 0)
+			{
+				yield return set;
 
-	        var incomingEdges = new List<Graph<TNode, bool>.Edge>(node.Incoming);
-	        foreach (var edge in incomingEdges)
-	        {
-	            var from = edge.From;
+				var count = set.Count;
+				for (var c = 0; c < count; ++c)
+				{
+					Graph<TNode, bool>.Node? node = set[0];
 
-	            if (edge.Metadata)
-			        Kill(from, killed);
+					// We need to enumerate before detaching the nodes, otherwise we will be modifying the collection
+					// during enumeration
+					incomingEdges.AddRange(node.Incoming);
 
-	            from.Detach(node);
-	        }
+					foreach (Graph<TNode, bool>.Edge edge in incomingEdges)
+					{
+						Graph<TNode, bool>.Node from = edge.From;
 
-	        node.Abandon();
-	    }
+						from.Detach(node);
 
-	    public IEnumerable<Graph<TNode, bool>.Node> Kill(Graph<TNode, bool>.Node node)
-	    {
-	        var killed = new HashSet<Graph<TNode, bool>.Node>();
-	        Kill(node, killed);
+						if (!_dead[from.Value] && from.OutgoingCount == 0)
+							set.Add(from);
+					}
 
-	        return killed;
-	    }
+					incomingEdges.Clear();
+					set.RemoveAt(0);
+				}
+			}
+		}
 
-	    // Kahn's algorithm, adjusted to yield batches and allow for killing.
-	    public IEnumerator<IEnumerable<Graph<TNode, bool>.Node>> GetEnumerator()
-	    {
-	        var graph = _graph.Copy();
-	        var set = new List<Graph<TNode, bool>.Node>(graph.Count);
-	        var incomingEdges = new List<Graph<TNode, bool>.Edge>(graph.Count);
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
 
-	        foreach (var node in graph)
-	            if (!_dead[node.Value] && node.OutgoingCount == 0)
-	                set.Add(node);
+		public DependencyEnumerable<TNode> Copy()
+		{
+			return new(_graph);
+		}
 
-	        while (set.Count > 0)
-	        {
-	            yield return set;
+		private void Kill(Graph<TNode, bool>.Node node, HashSet<Graph<TNode, bool>.Node> killed)
+		{
+			killed.Add(node);
 
-	            var count = set.Count;
-	            for (var c = 0; c < count; ++c)
-	            {
-	                var node = set[0];
+			_dead[node.Value] = true;
 
-	                // We need to enumerate before detaching the nodes, otherwise we will be modifying the collection
-	                // during enumeration
-	                incomingEdges.AddRange(node.Incoming);
+			List<Graph<TNode, bool>.Edge> incomingEdges = new(node.Incoming);
+			foreach (Graph<TNode, bool>.Edge edge in incomingEdges)
+			{
+				Graph<TNode, bool>.Node from = edge.From;
 
-	                foreach (var edge in incomingEdges)
-	                {
-	                    var from = edge.From;
+				if (edge.Metadata)
+					Kill(from, killed);
 
-	                    from.Detach(node);
+				from.Detach(node);
+			}
 
-	                    if (!_dead[from.Value] && from.OutgoingCount == 0)
-	                        set.Add(from);
-	                }
+			node.Abandon();
+		}
 
-	                incomingEdges.Clear();
-	                set.RemoveAt(0);
-	            }
-	        }
-	    }
+		public IEnumerable<Graph<TNode, bool>.Node> Kill(Graph<TNode, bool>.Node node)
+		{
+			HashSet<Graph<TNode, bool>.Node> killed = new();
+			Kill(node, killed);
 
-	    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+			return killed;
+		}
 	}
 }

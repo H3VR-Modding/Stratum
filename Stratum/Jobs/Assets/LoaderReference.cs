@@ -23,9 +23,15 @@ namespace Stratum.Jobs
 			return resolved;
 		}
 
-		public bool Equals(LoaderReference other) => Plugin == other.Plugin && Name == other.Name;
+		public bool Equals(LoaderReference other)
+		{
+			return Plugin == other.Plugin && Name == other.Name;
+		}
 
-		public override bool Equals(object? obj) => obj is LoaderReference other && Equals(other);
+		public override bool Equals(object? obj)
+		{
+			return obj is LoaderReference other && Equals(other);
+		}
 
 		public override int GetHashCode()
 		{
@@ -35,6 +41,9 @@ namespace Stratum.Jobs
 			}
 		}
 
-		public override string ToString() => $"{Plugin}:{Name}";
+		public override string ToString()
+		{
+			return $"{Plugin}:{Name}";
+		}
 	}
 }

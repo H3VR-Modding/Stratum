@@ -18,15 +18,6 @@ namespace Stratum
 
 		private static StratumRoot? _instance;
 
-		public static void Inject(IStratumPlugin plugin)
-		{
-			if (_instance == null)
-				throw new InvalidOperationException(
-					"Stratum has not yet initialised! Please ensure your BepInEx plugin depends on 'stratum'.");
-
-			_instance.InjectInstance(plugin);
-		}
-
 		private readonly List<IStratumPlugin> _plugins = new();
 		private bool _started;
 
@@ -34,7 +25,7 @@ namespace Stratum
 		{
 			_instance = this;
 
-			var listener = new ChainloaderLogListener();
+			ChainloaderLogListener listener = new();
 
 			void Callback()
 			{
@@ -47,15 +38,24 @@ namespace Stratum
 			BepInEx.Logging.Logger.Listeners.Add(listener);
 		}
 
+		public static void Inject(IStratumPlugin plugin)
+		{
+			if (_instance == null)
+				throw new InvalidOperationException(
+					"Stratum has not yet initialised! Please ensure your BepInEx plugin depends on 'stratum'.");
+
+			_instance.InjectInstance(plugin);
+		}
+
 		private Graph<IStratumPlugin, bool> ModsToGraph()
 		{
-			var nodes = new Dictionary<string, Graph<IStratumPlugin, bool>.Node>(_plugins.Count);
-			var graph = new Graph<IStratumPlugin, bool>(_plugins);
+			Dictionary<string, Graph<IStratumPlugin, bool>.Node> nodes = new(_plugins.Count);
+			Graph<IStratumPlugin, bool> graph = new(_plugins);
 
 			foreach (var node in graph)
 			{
-				var plugin = node.Metadata;
-				var info = plugin.Info;
+				IStratumPlugin plugin = node.Metadata;
+				PluginInfo info = plugin.Info;
 
 				foreach (var reference in info.Dependencies)
 				{
@@ -84,16 +84,16 @@ namespace Stratum
 			if (_plugins.Count == 0)
 				return;
 
-			var graph = ModsToGraph();
-			var deps = new DependencyEnumerable<IStratumPlugin>(graph);
+			Graph<IStratumPlugin, bool> graph = ModsToGraph();
+			DependencyEnumerable<IStratumPlugin> deps = new(graph);
 
 			{
-				var immediate = new ImmediateScheduler(Logger, deps);
-				using var stage = new SetupStage(_plugins.Count, Logger);
+				ImmediateScheduler scheduler = new(Logger, deps);
+				using SetupStage stage = new(_plugins.Count, Logger);
 
 				try
 				{
-					immediate.Run(stage);
+					scheduler.Run(stage);
 				}
 				catch (Exception e)
 				{
@@ -104,15 +104,15 @@ namespace Stratum
 			}
 
 			{
-				var delayed = new DelayedScheduler(Logger, deps, StartCoroutine);
+				DelayedScheduler scheduler = new(Logger, deps, StartCoroutine);
 				// Don't dispose this, it will die before the coroutine starts.
 				// Also, stuff in runtime can be used throughout runtime.
-				var stage = new RuntimeStage(_plugins.Count, Logger);
+				RuntimeStage stage = new(_plugins.Count, Logger);
 
 				IEnumerator exec;
 				try
 				{
-					exec = delayed
+					exec = scheduler
 						.Run(stage)
 						.TryCatch(e => Logger.LogFatal("An unhandled exception was thrown by the delayed stage scheduler " +
 						                               "(mid-yield). A stage may have been interrupted, and no further stages will be " +

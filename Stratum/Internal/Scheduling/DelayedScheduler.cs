@@ -20,24 +20,22 @@ namespace Stratum.Internal.Scheduling
 
 		public override IEnumerator Run(Stage<IEnumerator> stage)
 		{
-			var concurrent = new Stack<Coroutine>();
+			Stack<Coroutine> concurrent = new();
 
 			foreach (var batch in Plugins)
 			{
 				// Start batch
 				foreach (var plugin in batch)
 				{
-					var pipeline = stage.Run(plugin.Metadata).TryCatch(e => ContextException(plugin, stage, e));
-					var coroutine = _startCoroutine(pipeline);
+					IEnumerator pipeline = stage.Run(plugin.Metadata).TryCatch(e => ContextException(plugin, stage, e));
+					Coroutine running = _startCoroutine(pipeline);
 
-					concurrent.Push(coroutine);
+					concurrent.Push(running);
 				}
 
 				// Await batch
 				while (concurrent.Count > 0)
-				{
 					yield return concurrent.Pop();
-				}
 			}
 		}
 	}

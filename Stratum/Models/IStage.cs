@@ -6,8 +6,8 @@ namespace Stratum
 	{
 		Stages Variant { get; }
 
-		IReadOnlyStageContext<TRet>? TryGet(string guid);
-
 		IReadOnlyStageContext<TRet> this[string guid] { get; }
+
+		IReadOnlyStageContext<TRet>? TryGet(string guid);
 	}
 }

@@ -17,13 +17,22 @@ namespace Stratum.Internal.IO
 		}
 	}
 
-	internal class LoaderDictionary<TRet> : IDictionary<string, Loader<TRet>>, IReadOnlyDictionary<string, Loader<TRet>>, IFreezable, IDisposable
+	internal class LoaderDictionary<TRet> : IDictionary<string, Loader<TRet>>, IReadOnlyDictionary<string, Loader<TRet>>, IFreezable,
+		IDisposable
 	{
 		// A shortcut
-		private static void ValidateKey(string key) => LoaderDictionary.ValidateKey(key);
+		private static void ValidateKey(string key)
+		{
+			LoaderDictionary.ValidateKey(key);
+		}
 
 		private Dictionary<string, Loader<TRet>>? _read;
 		private Dictionary<string, Loader<TRet>>? _write;
+
+		public LoaderDictionary()
+		{
+			_read = _write = new Dictionary<string, Loader<TRet>>();
+		}
 
 		private IDictionary<string, Loader<TRet>> Read => _read ?? throw new ObjectDisposedException(GetType().FullName);
 		private IDictionary<string, Loader<TRet>> Write => _write ?? throw new ObjectFrozenException(GetType().FullName);
@@ -33,12 +42,8 @@ namespace Stratum.Internal.IO
 		public bool IsReadOnly => _write is null && (_read is not null ? true : throw new ObjectDisposedException(GetType().FullName));
 
 		public ICollection<string> Keys => Read.Keys;
-		IEnumerable<string> IReadOnlyDictionary<string, Loader<TRet>>.Keys => Keys;
 
 		public ICollection<Loader<TRet>> Values => Read.Values;
-		IEnumerable<Loader<TRet>> IReadOnlyDictionary<string, Loader<TRet>>.Values => Values;
-
-		public LoaderDictionary() => _read = _write = new();
 
 		public void Add(string key, Loader<TRet> value)
 		{
@@ -54,17 +59,40 @@ namespace Stratum.Internal.IO
 			Write.Add(item);
 		}
 
-		public bool Remove(string key) => Write.Remove(key);
-		public bool Remove(KeyValuePair<string, Loader<TRet>> item) => Write.Remove(item);
+		public bool Remove(string key)
+		{
+			return Write.Remove(key);
+		}
 
-		public void Clear() => Write.Clear();
+		public bool Remove(KeyValuePair<string, Loader<TRet>> item)
+		{
+			return Write.Remove(item);
+		}
 
-		public bool ContainsKey(string key) => Read.ContainsKey(key);
-		public bool Contains(KeyValuePair<string, Loader<TRet>> item) => Read.Contains(item);
+		public void Clear()
+		{
+			Write.Clear();
+		}
 
-		public bool TryGetValue(string key, out Loader<TRet> value) => Read.TryGetValue(key, out value);
+		public bool ContainsKey(string key)
+		{
+			return Read.ContainsKey(key);
+		}
 
-		public void CopyTo(KeyValuePair<string, Loader<TRet>>[] array, int arrayIndex) => Read.CopyTo(array, arrayIndex);
+		public bool Contains(KeyValuePair<string, Loader<TRet>> item)
+		{
+			return Read.Contains(item);
+		}
+
+		public bool TryGetValue(string key, out Loader<TRet> value)
+		{
+			return Read.TryGetValue(key, out value);
+		}
+
+		public void CopyTo(KeyValuePair<string, Loader<TRet>>[] array, int arrayIndex)
+		{
+			Read.CopyTo(array, arrayIndex);
+		}
 
 		public Loader<TRet> this[string key]
 		{
@@ -77,11 +105,28 @@ namespace Stratum.Internal.IO
 			}
 		}
 
-		public void Freeze() => _write = null;
+		public IEnumerator<KeyValuePair<string, Loader<TRet>>> GetEnumerator()
+		{
+			return Read.GetEnumerator();
+		}
 
-		public void Dispose() => _read = _write = null;
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
 
-		public IEnumerator<KeyValuePair<string, Loader<TRet>>> GetEnumerator() => Read.GetEnumerator();
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+		public void Dispose()
+		{
+			_read = _write = null;
+		}
+
+		public void Freeze()
+		{
+			_write = null;
+		}
+
+		IEnumerable<string> IReadOnlyDictionary<string, Loader<TRet>>.Keys => Keys;
+
+		IEnumerable<Loader<TRet>> IReadOnlyDictionary<string, Loader<TRet>>.Values => Values;
 	}
 }

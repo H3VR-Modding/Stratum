@@ -8,15 +8,21 @@ namespace Stratum.Jobs
 	{
 		private string? _name;
 
+		protected Pipeline(TSelf parent)
+		{
+			Parent = parent;
+		}
+
+		protected Pipeline()
+		{
+			_name = "<root>";
+		}
+
 		public TSelf? Parent { get; }
 
 		public List<Job<TRet>> Jobs { get; } = new();
 
 		public string Name => _name ?? "<unknown>";
-
-		protected Pipeline(TSelf parent) => Parent = parent;
-
-		public Pipeline() => _name = "<root>"; 
 
 		protected abstract TSelf CreateNested();
 
@@ -34,19 +40,19 @@ namespace Stratum.Jobs
 
 		public TSelf AddNested(Action<TSelf> nested, PipelineBuilder<TRet, TSelf> builder)
 		{
-			var subpipe = CreateNested();
+			TSelf subpipe = CreateNested();
 			nested(subpipe);
-			var job = builder(subpipe);
+			Job<TRet> job = builder(subpipe);
 
 			return AddJob(job);
 		}
 
 		public override string ToString()
 		{
-			var builder = new StringBuilder();
+			StringBuilder builder = new();
 
 			// Path-like structure to determine the callstack of the pipeline.
-			var parent = Parent;
+			TSelf? parent = Parent;
 			while (parent is not null)
 			{
 				builder
@@ -69,6 +75,9 @@ namespace Stratum.Jobs
 	{
 		private Pipeline(Pipeline<TRet> parent) : base(parent) { }
 
-		protected override Pipeline<TRet> CreateNested() => new(this);
+		protected override Pipeline<TRet> CreateNested()
+		{
+			return new(this);
+		}
 	}
 }

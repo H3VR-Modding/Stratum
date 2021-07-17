@@ -13,7 +13,7 @@ namespace Stratum.Internal.Staging
 
 		protected override IEnumerator BeginRun(StageContext<IEnumerator> ctx)
 		{
-			var plugin = ctx.Plugin;
+			IStratumPlugin plugin = ctx.Plugin;
 
 			IEnumerator enumerator;
 			try
@@ -25,7 +25,8 @@ namespace Stratum.Internal.Staging
 				throw new Exception("The plugin's runtime callback threw an exception (pre-yield).", e);
 			}
 
-			foreach (var item in enumerator.TryCatch(e => throw new Exception("The plugin's runtime callback threw an exception (mid-yield)", e)))
+			foreach (var item in enumerator.TryCatch(e =>
+				throw new Exception("The plugin's runtime callback threw an exception (mid-yield)", e)))
 				yield return item;
 
 			// Do try-finally this. Context should only be added through a successful load.

@@ -18,16 +18,22 @@ namespace Stratum.Jobs
 
 		public AssetDefinition<TRet> Resolve<TRet>(IStage<TRet> stage, DirectoryInfo root)
 		{
-			var loader = Loader.Resolve(stage);
-			var handle = root.GetChild(Path) ?? throw
+			Loader<TRet> loader = Loader.Resolve(stage);
+			FileSystemInfo handle = root.GetChild(Path) ?? throw
 				new FileNotFoundException($"No file/directory existed at path {Path} (root: {root})");
 
-			return new(handle, loader);
+			return new AssetDefinition<TRet>(handle, loader);
 		}
 
-		public bool Equals(AssetReference other) => Path == other.Path && Loader.Equals(other.Loader);
+		public bool Equals(AssetReference other)
+		{
+			return Path == other.Path && Loader.Equals(other.Loader);
+		}
 
-		public override bool Equals(object? obj) => obj is AssetReference other && Equals(other);
+		public override bool Equals(object? obj)
+		{
+			return obj is AssetReference other && Equals(other);
+		}
 
 		public override int GetHashCode()
 		{
@@ -37,6 +43,9 @@ namespace Stratum.Jobs
 			}
 		}
 
-		public override string ToString() => $"[{Loader} <- '{Path}']";
+		public override string ToString()
+		{
+			return $"[{Loader} <- '{Path}']";
+		}
 	}
 }

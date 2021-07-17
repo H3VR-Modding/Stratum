@@ -8,9 +8,7 @@ namespace Stratum.Internal.Scheduling
 {
 	internal sealed class ImmediateScheduler : Scheduler<Empty>
 	{
-		public ImmediateScheduler(ManualLogSource logger, DependencyEnumerable<IStratumPlugin> plugins) : base(logger, plugins)
-		{
-		}
+		public ImmediateScheduler(ManualLogSource logger, DependencyEnumerable<IStratumPlugin> plugins) : base(logger, plugins) { }
 
 		public override Empty Run(Stage<Empty> stage)
 		{
@@ -24,7 +22,7 @@ namespace Stratum.Internal.Scheduling
 					ContextException(plugin, stage, e);
 				}
 
-			return new();
+			return new Empty();
 		}
 	}
 }

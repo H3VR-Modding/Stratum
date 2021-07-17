@@ -8,15 +8,15 @@ namespace Stratum.Internal.Scheduling
 {
 	internal abstract class Scheduler<TRet>
 	{
-		protected ManualLogSource Logger { get; }
-
-		protected DependencyEnumerable<IStratumPlugin> Plugins { get; }
-
 		protected Scheduler(ManualLogSource logger, DependencyEnumerable<IStratumPlugin> plugins)
 		{
 			Logger = logger;
 			Plugins = plugins;
 		}
+
+		protected ManualLogSource Logger { get; }
+
+		protected DependencyEnumerable<IStratumPlugin> Plugins { get; }
 
 		protected void ContextException(Graph<IStratumPlugin, bool>.Node plugin, Stage<TRet> stage, Exception e)
 		{

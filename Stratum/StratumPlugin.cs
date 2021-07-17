@@ -6,14 +6,15 @@ namespace Stratum
 {
 	public abstract class StratumPlugin : BaseUnityPlugin, IStratumPlugin
 	{
-		protected PluginDirectories Directories { get; }
-
 		protected StratumPlugin()
 		{
-			Directories = new PluginDirectories(new(Path.GetDirectoryName(Info.Location)!));
+			DirectoryInfo root = new(Path.GetDirectoryName(Info.Location)!);
+			Directories = new PluginDirectories(root);
 
 			StratumRoot.Inject(this);
 		}
+
+		protected PluginDirectories Directories { get; }
 
 		public abstract void OnSetup(IStageContext<Empty> ctx);
 

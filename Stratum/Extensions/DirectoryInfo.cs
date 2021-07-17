@@ -8,11 +8,11 @@ namespace Stratum.Extensions
 		{
 			var abs = Path.Combine(@this.FullName, name);
 
-			var dir = new DirectoryInfo(abs);
+			DirectoryInfo dir = new(abs);
 			if (dir.Exists)
 				return dir;
 
-			var file = new FileInfo(abs);
+			FileInfo file = new(abs);
 			if (file.Exists)
 				return file;
 
@@ -21,14 +21,14 @@ namespace Stratum.Extensions
 
 		public static FileInfo GetFile(this DirectoryInfo @this, string path)
 		{
-			var abs = Path.Combine(@this.FullName, path);
+			string abs = Path.Combine(@this.FullName, path);
 
 			return new FileInfo(abs);
 		}
 
 		public static FileInfo RequireFile(this DirectoryInfo @this, string path)
 		{
-			var file = @this.GetFile(path);
+			FileInfo file = @this.GetFile(path);
 			if (!file.Exists)
 				throw new FileNotFoundException();
 
@@ -37,14 +37,14 @@ namespace Stratum.Extensions
 
 		public static DirectoryInfo GetDirectory(this DirectoryInfo @this, string path)
 		{
-			var abs = Path.Combine(@this.FullName, path);
+			string abs = Path.Combine(@this.FullName, path);
 
 			return new DirectoryInfo(abs);
 		}
 
 		public static DirectoryInfo RequireDirectory(this DirectoryInfo @this, string path)
 		{
-			var directory = @this.GetDirectory(path);
+			DirectoryInfo directory = @this.GetDirectory(path);
 			if (!directory.Exists)
 				throw new DirectoryNotFoundException();
 
