@@ -27,7 +27,7 @@ namespace Stratum.Internal.Staging
 			if (_contexts is null)
 				return;
 
-			foreach (var ctx in _contexts.Values)
+			foreach (StageContext<TRet> ctx in _contexts.Values)
 				ctx.Dispose();
 
 			_contexts = null;
@@ -37,7 +37,7 @@ namespace Stratum.Internal.Staging
 
 		public IReadOnlyStageContext<TRet>? TryGet(string guid)
 		{
-			return Contexts.TryGetValue(guid, out var context) ? context : null;
+			return Contexts.TryGetValue(guid, out StageContext<TRet> context) ? context : null;
 		}
 
 		public IReadOnlyStageContext<TRet> this[string guid] => TryGet(guid) ?? throw new InvalidOperationException("The plugin" +
@@ -78,12 +78,12 @@ namespace Stratum.Internal.Staging
 
 			shared.IntersectWith(loaders);
 
-			foreach (var name in loaders)
+			foreach (string name in loaders)
 				if (!shared.Contains(name))
 					throw new Exception("The plugin did not have a " + nameof(StratumLoaderAttribute) + " for the loader named '" +
 					                    name + "'");
 
-			foreach (var name in attributes)
+			foreach (string name in attributes)
 				if (!shared.Contains(name))
 					throw new Exception("The plugin did not add the loader named '" + name + "', as declared by the " +
 					                    nameof(StratumLoaderAttribute));

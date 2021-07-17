@@ -6,7 +6,7 @@ namespace Stratum.Extensions
 	{
 		public static FileSystemInfo? GetChild(this DirectoryInfo @this, string name)
 		{
-			var abs = Path.Combine(@this.FullName, name);
+			string abs = Path.Combine(@this.FullName, name);
 
 			DirectoryInfo dir = new(abs);
 			if (dir.Exists)

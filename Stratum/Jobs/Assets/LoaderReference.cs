@@ -17,7 +17,7 @@ namespace Stratum.Jobs
 
 		public Loader<TRet> Resolve<TRet>(IStage<TRet> stage)
 		{
-			if (!stage[Plugin].Loaders.TryGetValue(Name, out var resolved))
+			if (!stage[Plugin].Loaders.TryGetValue(Name, out Loader<TRet> resolved))
 				throw new KeyNotFoundException($"The plugin with GUID '{Plugin}' did not have the loader named '{Name}'");
 
 			return resolved;

@@ -17,40 +17,31 @@ namespace Example.Loaders
 	{
 		private const string PrintLoaderName = "print";
 
-		#region Readers/Writers
-
-		private static string StringReader(FileInfo file) => File.ReadAllText(file.FullName);
-
-		private static void StringWriter(FileInfo file, string value) => File.WriteAllText(file.FullName, value);
-
-		private static int IntReader(FileInfo file) => int.Parse(StringReader(file));
-
-		private static void IntWriter(FileInfo file, int value) => StringWriter(file, value.ToString());
-
-		private static string[] StringsReader(FileInfo file) => File.ReadAllLines(file.FullName);
-
-		#endregion
-
 		private readonly FileInfo _framesFile;
 
 		private int _frames;
-
-		private event Action? OnDestroyed;
 
 		public ExampleLoadersPlugin()
 		{
 			_framesFile = Directories.Cache.GetFile("frame.txt");
 		}
 
+		private void OnDestroy()
+		{
+			OnDestroyed?.Invoke();
+		}
+
+		private event Action? OnDestroyed;
+
 		public override void OnSetup(IStageContext<Empty> ctx)
 		{
 			Empty PrintLoader(FileSystemInfo handle)
 			{
 				// Read a string from the file, which asserts that the handle is a file.
-				var message = StringReader(handle.ConsumeFile());
+				string message = StringReader(handle.ConsumeFile());
 				Logger.LogMessage($"A message was loaded at setup: {message}");
 
-				return new();
+				return new Empty();
 			}
 
 			// Add loader Setup/stratum.example.loaders:print
@@ -65,14 +56,10 @@ namespace Example.Loaders
 			yield break;
 		}
 
-		private void OnDestroy() => OnDestroyed?.Invoke();
-
 		private void InitFrames()
 		{
 			if (_framesFile.Exists)
-			{
 				_frames = IntReader(_framesFile);
-			}
 
 			void WriteFrames() => IntWriter(_framesFile, _frames);
 
@@ -82,7 +69,7 @@ namespace Example.Loaders
 
 				while (true)
 				{
-					var next = _frames + interval;
+					int next = _frames + interval;
 					for (; _frames < next; ++_frames)
 						yield return null;
 
@@ -98,7 +85,7 @@ namespace Example.Loaders
 		{
 			IEnumerator PrintLoader(FileSystemInfo handle)
 			{
-				foreach (var message in StringsReader(handle.ConsumeFile()))
+				foreach (string message in StringsReader(handle.ConsumeFile()))
 				{
 					Logger.LogMessage($"A message was loaded at runtime (frame: {_frames}): {message}");
 					yield return null;
@@ -108,5 +95,34 @@ namespace Example.Loaders
 			// Add loader Runtime/stratum.example.loaders:print
 			ctx.Loaders.Add(PrintLoaderName, PrintLoader);
 		}
+
+		#region Readers/Writers
+
+		private static string StringReader(FileInfo file)
+		{
+			return File.ReadAllText(file.FullName);
+		}
+
+		private static void StringWriter(FileInfo file, string value)
+		{
+			File.WriteAllText(file.FullName, value);
+		}
+
+		private static int IntReader(FileInfo file)
+		{
+			return int.Parse(StringReader(file));
+		}
+
+		private static void IntWriter(FileInfo file, int value)
+		{
+			StringWriter(file, value.ToString());
+		}
+
+		private static string[] StringsReader(FileInfo file)
+		{
+			return File.ReadAllLines(file.FullName);
+		}
+
+		#endregion
 	}
 }

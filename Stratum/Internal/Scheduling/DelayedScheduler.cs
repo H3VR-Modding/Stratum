@@ -22,10 +22,10 @@ namespace Stratum.Internal.Scheduling
 		{
 			Stack<Coroutine> concurrent = new();
 
-			foreach (var batch in Plugins)
+			foreach (IEnumerable<Graph<IStratumPlugin, bool>.Node> batch in Plugins)
 			{
 				// Start batch
-				foreach (var plugin in batch)
+				foreach (Graph<IStratumPlugin, bool>.Node plugin in batch)
 				{
 					IEnumerator pipeline = stage.Run(plugin.Metadata).TryCatch(e => ContextException(plugin, stage, e));
 					Coroutine running = _startCoroutine(pipeline);

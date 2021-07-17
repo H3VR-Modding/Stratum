@@ -12,7 +12,7 @@ namespace Stratum.Internal.Scheduling
 
 		public override Empty Run(Stage<Empty> stage)
 		{
-			foreach (var plugin in Plugins.SelectMany(v => v))
+			foreach (Graph<IStratumPlugin, bool>.Node plugin in Plugins.SelectMany(v => v))
 				try
 				{
 					stage.Run(plugin.Metadata);

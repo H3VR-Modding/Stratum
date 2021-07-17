@@ -79,10 +79,10 @@ namespace Stratum.Extensions
 
 		public static IEnumerator ContinueWith(this IEnumerator @this, IEnumerator continuation)
 		{
-			foreach (var item in @this)
+			foreach (object? item in @this)
 				yield return item;
 
-			foreach (var item in continuation)
+			foreach (object? item in continuation)
 				yield return item;
 		}
 	}

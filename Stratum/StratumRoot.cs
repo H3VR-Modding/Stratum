@@ -52,21 +52,21 @@ namespace Stratum
 			Dictionary<string, Graph<IStratumPlugin, bool>.Node> nodes = new(_plugins.Count);
 			Graph<IStratumPlugin, bool> graph = new(_plugins);
 
-			foreach (var node in graph)
+			foreach (Graph<IStratumPlugin, bool>.Node node in graph)
 			{
 				IStratumPlugin plugin = node.Metadata;
 				PluginInfo info = plugin.Info;
 
-				foreach (var reference in info.Dependencies)
+				foreach (BepInDependency reference in info.Dependencies)
 				{
 					// This is unintuitive, but let me explain. This means either/both:
 					// 1. The dependency is soft, because BepInEx didn't load it and BepInEx would load a hard-dependent.
 					// 2. The plugin isn't a Stratum plugin, because it never injected.
 					// In either situation, we don't care.
-					if (!nodes.TryGetValue(reference.DependencyGUID, out var resolved))
+					if (!nodes.TryGetValue(reference.DependencyGUID, out Graph<IStratumPlugin, bool>.Node? resolved))
 						continue;
 
-					var isHard = reference.Flags.HasFlag(BepInDependency.DependencyFlags.HardDependency);
+					bool isHard = reference.Flags.HasFlag(BepInDependency.DependencyFlags.HardDependency);
 					node.Attach(resolved, isHard);
 				}
 

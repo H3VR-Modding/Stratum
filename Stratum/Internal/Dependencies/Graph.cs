@@ -63,7 +63,7 @@ namespace Stratum.Internal.Dependencies
 		{
 			HashSet<int> history = new();
 
-			foreach (var node in this)
+			foreach (Node node in this)
 			{
 				if (!Acyclic(history, node))
 					return false;
@@ -156,7 +156,7 @@ namespace Stratum.Internal.Dependencies
 
 			public void Abandon()
 			{
-				foreach (var outgoing in _outgoing.Keys)
+				foreach (int outgoing in _outgoing.Keys)
 					_graph[outgoing]._incoming.Remove(Value);
 
 				_outgoing.Clear();

@@ -57,7 +57,7 @@ namespace Stratum.Jobs
 	{
 		private static PipelineBuilder<Empty, AssetPipeline<Empty>> SetupBuilder { get; } = pipeline => (stage, logger) =>
 		{
-			foreach (var job in pipeline.Jobs)
+			foreach (Job<Empty> job in pipeline.Jobs)
 				job(stage, logger);
 
 			return new Empty();
@@ -67,7 +67,7 @@ namespace Stratum.Jobs
 		{
 			IEnumerator Job(IStage<IEnumerator> stage, ManualLogSource logger)
 			{
-				foreach (var job in pipeline.Jobs)
+				foreach (Job<IEnumerator> job in pipeline.Jobs)
 				foreach (var item in job(stage, logger))
 					yield return item;
 			}

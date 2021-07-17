@@ -25,7 +25,7 @@ namespace Stratum.Internal.Staging
 				throw new Exception("The plugin's runtime callback threw an exception (pre-yield).", e);
 			}
 
-			foreach (var item in enumerator.TryCatch(e =>
+			foreach (object? item in enumerator.TryCatch(e =>
 				throw new Exception("The plugin's runtime callback threw an exception (mid-yield)", e)))
 				yield return item;
 

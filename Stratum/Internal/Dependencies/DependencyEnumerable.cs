@@ -35,7 +35,7 @@ namespace Stratum.Internal.Dependencies
 			List<Graph<TNode, bool>.Node> set = new(graph.Count);
 			List<Graph<TNode, bool>.Edge> incomingEdges = new(graph.Count);
 
-			foreach (var node in graph)
+			foreach (Graph<TNode, bool>.Node node in graph)
 				if (!_dead[node.Value] && node.OutgoingCount == 0)
 					set.Add(node);
 
@@ -43,7 +43,7 @@ namespace Stratum.Internal.Dependencies
 			{
 				yield return set;
 
-				var count = set.Count;
+				int count = set.Count;
 				for (var c = 0; c < count; ++c)
 				{
 					Graph<TNode, bool>.Node? node = set[0];

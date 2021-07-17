@@ -20,8 +20,8 @@ namespace Stratum.Internal.Scheduling
 
 		protected void ContextException(Graph<IStratumPlugin, bool>.Node plugin, Stage<TRet> stage, Exception e)
 		{
-			var killed = Plugins.Kill(plugin).Select(v => v.Metadata.Info.ToString()).Skip(1).ToArray();
-			var cascade = string.Join(", ", killed);
+			string[] killed = Plugins.Kill(plugin).Select(v => v.Metadata.Info.ToString()).Skip(1).ToArray();
+			string cascade = string.Join(", ", killed);
 
 			var message = $"{plugin.Metadata.Info} caused an exception during {stage}.";
 			if (killed.Length > 0)

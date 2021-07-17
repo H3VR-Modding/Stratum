@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using BepInEx;
 using Stratum;
-using Stratum.Jobs;
 using Stratum.Extensions;
+using Stratum.Jobs;
 
 namespace Example.Assets
 {
@@ -25,7 +25,7 @@ namespace Example.Assets
 			// Sequential runs each job (e.g. asset) in order, one at a time. If one job fails, none of the jobs after it will run.
 			// Think of it like items on a conveyor line, and the whole line stops if an item is defective.
 
-			var assets = new AssetPipeline<Empty>(Directories.Data)
+			Job<Empty> assets = new AssetPipeline<Empty>(Directories.Data)
 				// Will load "data/motd.txt" into Setup/stratum.example.loaders::print
 				.AddAsset("motd.txt", _printLoader)
 				// Assembles the pipeline into a single, sequential job
@@ -42,7 +42,7 @@ namespace Example.Assets
 			// Parallel runs each job at the same time. If one job fails, it doesn't matter. All the jobs are already running.
 			// Think of it like items flung by a catapult, and some of the items might miss the target.
 
-			var assets = new AssetPipeline<IEnumerator>(Directories.Resources)
+			Job<IEnumerator> assets = new AssetPipeline<IEnumerator>(Directories.Resources)
 				// Will load "resources/1.txt" into Runtime/stratum.example.loaders::print
 				.AddAsset("1.txt", _printLoader)
 				// This adds another pipeline as a job, and the pipeline is ran sequentially
@@ -56,7 +56,7 @@ namespace Example.Assets
 
 			// Runs the pipeline
 			// Use foreach on the IEnumerator instead of yield return, as it propagates the exception (i.e. allows it to be handled properly)
-			foreach (var item in assets(ctx.Stage, Logger))
+			foreach (object? item in assets(ctx.Stage, Logger))
 				yield return item;
 		}
 	}
