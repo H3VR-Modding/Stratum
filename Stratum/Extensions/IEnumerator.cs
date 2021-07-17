@@ -33,7 +33,7 @@ namespace Stratum.Extensions
 				throw exception;
 		}
 
-		public static IEnumerator TryCatch(this IEnumerator @this, Action<Exception> @catch)
+		public static IEnumerator TryCatch<TException>(this IEnumerator @this, Func<TException, bool> @catch) where TException : Exception
 		{
 			bool MoveNext()
 			{
@@ -41,9 +41,11 @@ namespace Stratum.Extensions
 				{
 					return @this.MoveNext();
 				}
-				catch (Exception e)
+				catch (TException e)
 				{
-					@catch(e);
+					if (@catch(e))
+						throw;
+
 					return false;
 				}
 			}
@@ -51,6 +53,17 @@ namespace Stratum.Extensions
 			while (MoveNext())
 				yield return @this.Current;
 		}
+
+		public static IEnumerator TryCatch<TException>(this IEnumerator @this, Action<TException> @catch) where TException : Exception =>
+			@this.TryCatch<TException>(e =>
+			{
+				@catch(e);
+				return false;
+			});
+
+		public static IEnumerator TryCatch(this IEnumerator @this, Func<Exception, bool> @catch) => @this.TryCatch<Exception>(@catch);
+
+		public static IEnumerator TryCatch(this IEnumerator @this, Action<Exception> @catch) => @this.TryCatch<Exception>(@catch);
 
 		public static IEnumerator ContinueWith(this IEnumerator @this, IEnumerator continuation)
 		{
