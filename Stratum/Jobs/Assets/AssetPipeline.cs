@@ -95,7 +95,7 @@ namespace Stratum.Jobs
 						yield return coroutines[i];
 
 						Exception? e = exceptions[i];
-						if (e is null)
+						if (e == null)
 							continue;
 
 						// Throw exception in this callstack

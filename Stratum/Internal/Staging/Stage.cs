@@ -24,7 +24,7 @@ namespace Stratum.Internal.Staging
 
 		public void Dispose()
 		{
-			if (_contexts is null)
+			if (_contexts == null)
 				return;
 
 			foreach (StageContext<TRet> ctx in _contexts.Values)

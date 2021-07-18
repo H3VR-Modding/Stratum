@@ -53,7 +53,7 @@ namespace Stratum.Jobs
 
 			// Path-like structure to determine the callstack of the pipeline.
 			TSelf? parent = Parent;
-			while (parent is not null)
+			while (parent != null)
 			{
 				builder
 					.Insert(0, '/')

@@ -39,7 +39,7 @@ namespace Stratum.Internal.IO
 
 		public int Count => Read.Count;
 
-		public bool IsReadOnly => _write is null && (_read is not null ? true : throw new ObjectDisposedException(GetType().FullName));
+		public bool IsReadOnly => _write == null && (_read != null ? true : throw new ObjectDisposedException(GetType().FullName));
 
 		public ICollection<string> Keys => Read.Keys;
 

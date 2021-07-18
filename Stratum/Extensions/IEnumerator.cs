@@ -33,7 +33,7 @@ namespace Stratum.Extensions
 
 			@finally();
 
-			if (exception is not null)
+			if (exception != null)
 				throw exception;
 		}
 
