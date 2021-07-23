@@ -85,5 +85,13 @@ namespace Stratum.Extensions
 			foreach (object? item in continuation)
 				yield return item;
 		}
+
+		public static IEnumerator ContinueWith(this IEnumerator @this, Action continuation)
+		{
+			foreach (object? item in @this)
+				yield return item;
+
+			continuation();
+		}
 	}
 }

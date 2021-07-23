@@ -125,7 +125,7 @@ namespace Stratum
 					return;
 				}
 
-				StartCoroutine(exec);
+				StartCoroutine(exec.ContinueWith(() => Logger.LogMessage("Loading complete")));
 			}
 		}
 
