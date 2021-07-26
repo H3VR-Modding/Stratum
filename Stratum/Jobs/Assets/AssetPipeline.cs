@@ -34,7 +34,7 @@ namespace Stratum.Jobs
 				logger.LogDebug($"{this} | Resolving {reference}");
 				AssetDefinition<TRet> definition = reference.Resolve(stage, Root);
 
-				logger.LogDebug($"{this} | Resolved and running {definition}");
+				logger.LogDebug($"{this} | Running {reference}");
 				return definition.Run();
 			}
 
@@ -94,12 +94,9 @@ namespace Stratum.Jobs
 					{
 						yield return coroutines[i];
 
-						Exception? e = exceptions[i];
-						if (e == null)
-							continue;
-
 						// Throw exception in this callstack
-						throw e;
+						if (exceptions[i] is { } e)
+							throw e;
 					}
 				}
 
@@ -119,8 +116,7 @@ namespace Stratum.Jobs
 		}
 
 		public static AssetPipeline<IEnumerator> AddNestedParallel(this AssetPipeline<IEnumerator> @this,
-			Action<AssetPipeline<IEnumerator>> nested,
-			CoroutineStarter startCoroutine)
+			Action<AssetPipeline<IEnumerator>> nested, CoroutineStarter startCoroutine)
 		{
 			return @this.AddNested(nested, RuntimeParallelBuilder(startCoroutine));
 		}

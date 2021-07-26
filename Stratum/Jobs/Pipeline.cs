@@ -6,29 +6,24 @@ namespace Stratum.Jobs
 {
 	public abstract class Pipeline<TRet, TSelf> where TSelf : Pipeline<TRet, TSelf>
 	{
-		private string? _name;
-
 		protected Pipeline(TSelf parent)
 		{
 			Parent = parent;
 		}
 
-		protected Pipeline()
-		{
-			_name = "<root>";
-		}
+		public Pipeline() { }
 
 		public TSelf? Parent { get; }
 
 		public List<Job<TRet>> Jobs { get; } = new();
 
-		public string Name => _name ?? "<unknown>";
+		public string? Name { get; set; }
 
 		protected abstract TSelf CreateNested();
 
 		public TSelf WithName(string? name)
 		{
-			_name = name;
+			Name = name;
 			return (TSelf) this;
 		}
 
@@ -49,6 +44,7 @@ namespace Stratum.Jobs
 
 		public override string ToString()
 		{
+			const string unnamed = "<unnamed>";
 			StringBuilder builder = new();
 
 			// Path-like structure to determine the callstack of the pipeline.
@@ -57,15 +53,11 @@ namespace Stratum.Jobs
 			{
 				builder
 					.Insert(0, '/')
-					.Insert(0, parent.Name);
+					.Insert(0, parent.Name ?? unnamed);
 				parent = parent.Parent;
 			}
 
-			builder
-				.Append(Name)
-				.Append(" (")
-				.Append(Jobs.Count)
-				.Append(')');
+			builder.Append(Name ?? unnamed);
 
 			return builder.ToString();
 		}
