@@ -51,7 +51,7 @@ namespace Stratum.Jobs
 				IReadOnlyStageContext<TRet> ctx = stage[plugin];
 
 				logger.LogDebug($"{pad} | Resolving loader '{name}'");
-				if (!ctx.Loaders.TryGetValue(plugin, out Loader<TRet> loader))
+				if (!ctx.Loaders.TryGetValue(name, out Loader<TRet> loader))
 					throw new KeyNotFoundException($"The plugin '{plugin}' did not have the loader named '{name}'");
 
 				logger.LogDebug($"{pad} | Resolving resource '{path}'");
