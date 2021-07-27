@@ -8,7 +8,7 @@ namespace Stratum.Internal.Scheduling
 {
 	internal abstract class Scheduler<TRet>
 	{
-		protected Scheduler(ManualLogSource logger, DependencyEnumerable<Plugin> plugins)
+		protected Scheduler(ManualLogSource logger, DependencyEnumerable<IStratumPlugin> plugins)
 		{
 			Logger = logger;
 			Plugins = plugins;
@@ -16,14 +16,14 @@ namespace Stratum.Internal.Scheduling
 
 		protected ManualLogSource Logger { get; }
 
-		protected DependencyEnumerable<Plugin> Plugins { get; }
+		protected DependencyEnumerable<IStratumPlugin> Plugins { get; }
 
-		protected void ContextException(Graph<Plugin, bool>.Node plugin, Stage<TRet> stage, Exception e)
+		protected void ContextException(Graph<IStratumPlugin, bool>.Node plugin, Stage<TRet> stage, Exception e)
 		{
-			string[] killed = Plugins.Kill(plugin).Select(v => v.Metadata.ToString()).Skip(1).ToArray();
+			string[] killed = Plugins.Kill(plugin).Select(v => v.Metadata.Info.ToString()).Skip(1).ToArray();
 			string cascade = string.Join(", ", killed);
 
-			var message = $"{plugin.Metadata} caused an exception during {stage}.";
+			var message = $"{plugin.Metadata.Info} caused an exception during {stage}.";
 			if (killed.Length > 0)
 				message += $"The following hard-dependents will not be loaded: {cascade}";
 

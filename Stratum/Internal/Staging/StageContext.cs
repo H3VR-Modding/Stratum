@@ -8,10 +8,10 @@ namespace Stratum.Internal.Staging
 	{
 		private bool _frozen;
 		private LoaderDictionary<TRet>? _loaders = new();
-		private Plugin? _plugin;
+		private IStratumPlugin? _plugin;
 		private IStage<TRet>? _stage;
 
-		public StageContext(IStage<TRet> stage, Plugin plugin)
+		public StageContext(IStage<TRet> stage, IStratumPlugin plugin)
 		{
 			_stage = stage;
 			_plugin = plugin;
@@ -33,12 +33,10 @@ namespace Stratum.Internal.Staging
 			_frozen = true;
 		}
 
-		internal Plugin PluginInternal => DisposeRet(_plugin);
-
 		public IStage<TRet> Stage => DisposeRet(_stage);
 
-		public IStratumPlugin Plugin => FreezeRet(_plugin).Content;
-		IReadOnlyStratumPlugin IReadOnlyStageContext<TRet>.Plugin => DisposeRet(_plugin).Content;
+		public IStratumPlugin Plugin => FreezeRet(_plugin);
+		IReadOnlyStratumPlugin IReadOnlyStageContext<TRet>.Plugin => DisposeRet(_plugin);
 
 		public IDictionary<string, Loader<TRet>> Loaders => FreezeRet(_loaders);
 		IReadOnlyDictionary<string, Loader<TRet>> IReadOnlyStageContext<TRet>.Loaders => DisposeRet(_loaders);

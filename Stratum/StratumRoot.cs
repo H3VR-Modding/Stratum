@@ -1,11 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using BepInEx;
 using BepInEx.Logging;
 using Stratum.Extensions;
-using Stratum.Internal;
 using Stratum.Internal.Dependencies;
 using Stratum.Internal.Scheduling;
 using Stratum.Internal.Staging;
@@ -39,7 +37,7 @@ namespace Stratum
 
 		private static StratumRoot? _instance;
 
-		private readonly List<Plugin> _plugins = new();
+		private readonly List<IStratumPlugin> _plugins = new();
 		private bool _started;
 
 		private void Awake()
@@ -73,14 +71,14 @@ namespace Stratum
 			_instance.InjectInstance(plugin);
 		}
 
-		private Graph<Plugin, bool> PluginsToGraph()
+		private Graph<IStratumPlugin, bool> PluginsToGraph()
 		{
-			Dictionary<string, Graph<Plugin, bool>.Node> nodes = new(_plugins.Count);
-			Graph<Plugin, bool> graph = new(_plugins);
+			Dictionary<string, Graph<IStratumPlugin, bool>.Node> nodes = new(_plugins.Count);
+			Graph<IStratumPlugin, bool> graph = new(_plugins);
 
-			foreach (Graph<Plugin, bool>.Node node in graph)
+			foreach (Graph<IStratumPlugin, bool>.Node node in graph)
 			{
-				IStratumPlugin plugin = node.Metadata.Content;
+				IStratumPlugin plugin = node.Metadata;
 				PluginInfo info = plugin.Info;
 
 				foreach (BepInDependency reference in info.Dependencies)
@@ -89,7 +87,7 @@ namespace Stratum
 					// 1. The dependency is soft, because BepInEx didn't load it and BepInEx would load a hard-dependent.
 					// 2. The plugin isn't a Stratum plugin, because it never injected.
 					// In either situation, we don't care.
-					if (!nodes.TryGetValue(reference.DependencyGUID, out Graph<Plugin, bool>.Node? resolved))
+					if (!nodes.TryGetValue(reference.DependencyGUID, out Graph<IStratumPlugin, bool>.Node? resolved))
 						continue;
 
 					bool isHard = reference.Flags.HasFlag(BepInDependency.DependencyFlags.HardDependency);
@@ -110,8 +108,8 @@ namespace Stratum
 			if (_plugins.Count == 0)
 				return;
 
-			Graph<Plugin, bool> graph = PluginsToGraph();
-			DependencyEnumerable<Plugin> deps = new(graph);
+			Graph<IStratumPlugin, bool> graph = PluginsToGraph();
+			DependencyEnumerable<IStratumPlugin> deps = new(graph);
 
 			{
 				ImmediateScheduler scheduler = new(Logger, deps);
@@ -163,13 +161,13 @@ namespace Stratum
 				                                    "from the plugin being reloaded via BepInEx.ScriptEngine.");
 
 			// Avoid duplicating any plugins
-			if (_plugins.Any(x => x.Content == plugin))
+			if (_plugins.Contains(plugin))
 			{
 				Logger.LogWarning($"{plugin.Info} attempted to inject itself again.");
 				return;
 			}
 
-			_plugins.Add(new Plugin(plugin));
+			_plugins.Add(plugin);
 		}
 
 		private class ChainloaderLogListener : ILogListener

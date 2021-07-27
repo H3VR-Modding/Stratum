@@ -59,35 +59,14 @@ namespace Stratum.Internal.Staging
 		{
 			ctx.Freeze();
 
-			Plugin plugin = ctx.PluginInternal;
-
-			// All this is just to validate that the attributes == loaders
-			if (!plugin.Loaders.TryGetValue(Variant, out var attributes))
-				attributes = new string[0];
-			List<string> loaders = ctx.Loaders.Select(v => v.Key).ToList();
-
-			HashSet<string> shared = new(attributes);
-			if (shared.Count < attributes.Length) // duplicate attributes
-				throw new Exception($"The plugin had one or more duplicate {Variant.ToFriendlyString()} loaders.");
-
-			shared.IntersectWith(loaders);
-
-			foreach (string name in loaders)
-				if (!shared.Contains(name))
-					throw new Exception($"The plugin did not declare the {Variant.ToFriendlyString()} loader named '{name}'");
-
-			foreach (string name in attributes)
-				if (!shared.Contains(name))
-					throw new Exception($"The plugin did not add the declared {Variant.ToFriendlyString()} loader named '{name}'");
-
-			Contexts.Add(plugin.Content.Info.Metadata.GUID, ctx);
+			Contexts.Add(ctx.Plugin.Info.Metadata.GUID, ctx);
 		}
 
 		protected abstract TRet BeginRun(StageContext<TRet> ctx);
 
-		public TRet Run(Plugin plugin)
+		public TRet Run(IStratumPlugin plugin)
 		{
-			Logger.LogDebug($"Loading {plugin} -> {Variant}");
+			Logger.LogDebug($"Loading {plugin.Info} -> {Variant}");
 
 			return BeginRun(new StageContext<TRet>(this, plugin));
 		}
