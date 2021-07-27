@@ -8,11 +8,11 @@ namespace Stratum.Internal.Scheduling
 {
 	internal sealed class ImmediateScheduler : Scheduler<Empty>
 	{
-		public ImmediateScheduler(ManualLogSource logger, DependencyEnumerable<IStratumPlugin> plugins) : base(logger, plugins) { }
+		public ImmediateScheduler(ManualLogSource logger, DependencyEnumerable<Plugin> plugins) : base(logger, plugins) { }
 
 		public override Empty Run(Stage<Empty> stage)
 		{
-			foreach (Graph<IStratumPlugin, bool>.Node plugin in Plugins.SelectMany(v => v))
+			foreach (Graph<Plugin, bool>.Node plugin in Plugins.SelectMany(v => v))
 				try
 				{
 					stage.Run(plugin.Metadata);

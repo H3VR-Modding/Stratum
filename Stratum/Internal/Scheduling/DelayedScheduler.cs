@@ -12,7 +12,7 @@ namespace Stratum.Internal.Scheduling
 	{
 		private readonly CoroutineStarter _startCoroutine;
 
-		public DelayedScheduler(ManualLogSource logger, DependencyEnumerable<IStratumPlugin> plugins, CoroutineStarter startCoroutine)
+		public DelayedScheduler(ManualLogSource logger, DependencyEnumerable<Plugin> plugins, CoroutineStarter startCoroutine)
 			: base(logger, plugins)
 		{
 			_startCoroutine = startCoroutine;
@@ -22,10 +22,10 @@ namespace Stratum.Internal.Scheduling
 		{
 			Stack<Coroutine> concurrent = new();
 
-			foreach (IEnumerable<Graph<IStratumPlugin, bool>.Node> batch in Plugins)
+			foreach (IEnumerable<Graph<Plugin, bool>.Node> batch in Plugins)
 			{
 				// Start batch
-				foreach (Graph<IStratumPlugin, bool>.Node plugin in batch)
+				foreach (Graph<Plugin, bool>.Node plugin in batch)
 				{
 					IEnumerator pipeline = stage.Run(plugin.Metadata).TryCatch(e => ContextException(plugin, stage, e));
 					Coroutine running = _startCoroutine(pipeline);
