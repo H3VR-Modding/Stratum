@@ -7,7 +7,7 @@ namespace Stratum
 	/// </summary>
 	public interface IReadOnlyDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
 	{
-		/// <inheritdoc cref="IDictionary{TKey,TValue}.Count" />
+		/// <inheritdoc cref="ICollection{T}.Count" />
 		int Count { get; }
 
 		/// <inheritdoc cref="IDictionary{TKey,TValue}.Keys" />
