@@ -59,7 +59,10 @@ namespace Stratum.Internal.Staging
 		{
 			ctx.Freeze();
 
-			Contexts.Add(ctx.Plugin.Info.Metadata.GUID, ctx);
+			IReadOnlyStageContext<TRet> rctx = ctx;
+			string guid = rctx.Plugin.Info.Metadata.GUID;
+
+			Contexts.Add(guid, ctx);
 		}
 
 		protected abstract TRet BeginRun(StageContext<TRet> ctx);
