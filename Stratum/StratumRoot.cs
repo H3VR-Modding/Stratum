@@ -11,7 +11,7 @@ using Stratum.Internal.Staging;
 namespace Stratum
 {
 	/// <summary>
-	///		The Stratum BepInEx plugin
+	///     The Stratum BepInEx plugin
 	/// </summary>
 	[BepInPlugin(GUID, "Stratum", ExactVersion)]
 	public sealed class StratumRoot : BaseUnityPlugin
@@ -27,11 +27,12 @@ namespace Stratum
 		private const string ExactVersion = MajorMinorVersion + "0";
 
 		/// <summary>
-		///		The BepInEx GUID used by Stratum
+		///     The BepInEx GUID used by Stratum
 		/// </summary>
 		public const string GUID = "stratum";
+
 		/// <summary>
-		///		The version of Stratum with a zeroed patch component. To find the exact version, use the BepInEx API
+		///     The version of Stratum with a zeroed patch component. To find the exact version, use the BepInEx API
 		/// </summary>
 		public const string Version = MajorMinorVersion + "0";
 
@@ -58,7 +59,7 @@ namespace Stratum
 		}
 
 		/// <summary>
-		///		Adds a plugin to Stratum, allowing it to utilize all the benefits of the Stratum ecosystem
+		///     Adds a plugin to Stratum, allowing it to utilize all the benefits of the Stratum ecosystem
 		/// </summary>
 		/// <param name="plugin">The plugin to add to Stratum</param>
 		/// <exception cref="InvalidOperationException">Stratum has not yet initialised or it has already started</exception>

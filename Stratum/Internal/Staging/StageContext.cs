@@ -17,6 +17,14 @@ namespace Stratum.Internal.Staging
 			_plugin = plugin;
 		}
 
+		public IStage<TRet> Stage => DisposeRet(_stage);
+
+		public IStratumPlugin Plugin => FreezeRet(_plugin);
+		IReadOnlyStratumPlugin IReadOnlyStageContext<TRet>.Plugin => DisposeRet(_plugin);
+
+		public IDictionary<string, Loader<TRet>> Loaders => FreezeRet(_loaders);
+		IReadOnlyDictionary<string, Loader<TRet>> IReadOnlyStageContext<TRet>.Loaders => DisposeRet(_loaders);
+
 		public void Dispose()
 		{
 			_loaders?.Dispose();
@@ -32,14 +40,6 @@ namespace Stratum.Internal.Staging
 
 			_frozen = true;
 		}
-
-		public IStage<TRet> Stage => DisposeRet(_stage);
-
-		public IStratumPlugin Plugin => FreezeRet(_plugin);
-		IReadOnlyStratumPlugin IReadOnlyStageContext<TRet>.Plugin => DisposeRet(_plugin);
-
-		public IDictionary<string, Loader<TRet>> Loaders => FreezeRet(_loaders);
-		IReadOnlyDictionary<string, Loader<TRet>> IReadOnlyStageContext<TRet>.Loaders => DisposeRet(_loaders);
 
 		private T FreezeRet<T>(T? value)
 		{

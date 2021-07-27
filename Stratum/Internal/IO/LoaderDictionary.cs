@@ -45,6 +45,21 @@ namespace Stratum.Internal.IO
 
 		public ICollection<Loader<TRet>> Values => Read.Values;
 
+		IEnumerable<string> IReadOnlyDictionary<string, Loader<TRet>>.Keys => Keys;
+
+		IEnumerable<Loader<TRet>> IReadOnlyDictionary<string, Loader<TRet>>.Values => Values;
+
+		public Loader<TRet> this[string key]
+		{
+			get => Read[key];
+			set
+			{
+				ValidateKey(key);
+
+				Write[key] = value;
+			}
+		}
+
 		public void Add(string key, Loader<TRet> value)
 		{
 			ValidateKey(key);
@@ -94,17 +109,6 @@ namespace Stratum.Internal.IO
 			Read.CopyTo(array, arrayIndex);
 		}
 
-		public Loader<TRet> this[string key]
-		{
-			get => Read[key];
-			set
-			{
-				ValidateKey(key);
-
-				Write[key] = value;
-			}
-		}
-
 		public IEnumerator<KeyValuePair<string, Loader<TRet>>> GetEnumerator()
 		{
 			return Read.GetEnumerator();
@@ -124,9 +128,5 @@ namespace Stratum.Internal.IO
 		{
 			_write = null;
 		}
-
-		IEnumerable<string> IReadOnlyDictionary<string, Loader<TRet>>.Keys => Keys;
-
-		IEnumerable<Loader<TRet>> IReadOnlyDictionary<string, Loader<TRet>>.Values => Values;
 	}
 }

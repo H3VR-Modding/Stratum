@@ -3,12 +3,12 @@ using System.IO;
 namespace Stratum.Extensions
 {
 	/// <summary>
-	///		Extension methods pertaining to <see cref="FileSystemInfo"/>
+	///     Extension methods pertaining to <see cref="FileSystemInfo" />
 	/// </summary>
 	public static class ExtDirectoryInfo
 	{
 		/// <summary>
-		///		Attempts to find a child handle of this directory with the specified name, otherwise returns <see langword="null"/>
+		///     Attempts to find a child handle of this directory with the specified name, otherwise returns <see langword="null" />
 		/// </summary>
 		/// <param name="this"></param>
 		/// <param name="name">The name of the handle</param>
@@ -28,7 +28,7 @@ namespace Stratum.Extensions
 		}
 
 		/// <summary>
-		///		Gets a file within this directory, whether it exists or not
+		///     Gets a file within this directory, whether it exists or not
 		/// </summary>
 		/// <param name="this"></param>
 		/// <param name="path">The path to the file, relative to this directory</param>
@@ -40,7 +40,7 @@ namespace Stratum.Extensions
 		}
 
 		/// <summary>
-		///		Gets a file within this directory if it exists, otherwise throws a <see cref="FileNotFoundException"/>
+		///     Gets a file within this directory if it exists, otherwise throws a <see cref="FileNotFoundException" />
 		/// </summary>
 		/// <param name="this"></param>
 		/// <param name="path">The path to the file, relative to this directory</param>
@@ -55,7 +55,7 @@ namespace Stratum.Extensions
 		}
 
 		/// <summary>
-		///		Gets a directory within this directory, whether it exists or not
+		///     Gets a directory within this directory, whether it exists or not
 		/// </summary>
 		/// <param name="this"></param>
 		/// <param name="path">The path to the directory, relative to this directory</param>
@@ -67,7 +67,7 @@ namespace Stratum.Extensions
 		}
 
 		/// <summary>
-		///		Gets a directory within this directory if it exists, otherwise throws a <see cref="DirectoryNotFoundException"/>
+		///     Gets a directory within this directory if it exists, otherwise throws a <see cref="DirectoryNotFoundException" />
 		/// </summary>
 		/// <param name="this"></param>
 		/// <param name="path">The path to the directory, relative to this directory</param>

@@ -22,6 +22,11 @@ namespace Stratum.Internal.Staging
 
 		protected ManualLogSource Logger { get; }
 
+		public abstract Stages Variant { get; }
+
+		public IReadOnlyStageContext<TRet> this[string guid] => TryGet(guid) ?? throw new InvalidOperationException("The plugin" +
+			$"with the GUID '{guid}' was not found.");
+
 		public void Dispose()
 		{
 			if (_contexts == null)
@@ -33,15 +38,10 @@ namespace Stratum.Internal.Staging
 			_contexts = null;
 		}
 
-		public abstract Stages Variant { get; }
-
 		public IReadOnlyStageContext<TRet>? TryGet(string guid)
 		{
 			return Contexts.TryGetValue(guid, out StageContext<TRet> context) ? context : null;
 		}
-
-		public IReadOnlyStageContext<TRet> this[string guid] => TryGet(guid) ?? throw new InvalidOperationException("The plugin" +
-			$"with the GUID '{guid}' was not found.");
 
 		public IEnumerator<IReadOnlyStageContext<TRet>> GetEnumerator()
 		{

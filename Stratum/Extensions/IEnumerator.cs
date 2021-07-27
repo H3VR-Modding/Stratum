@@ -4,12 +4,12 @@ using System.Collections;
 namespace Stratum.Extensions
 {
 	/// <summary>
-	///		Extension methods pertaining to <see cref="IEnumerator"/>
+	///     Extension methods pertaining to <see cref="IEnumerator" />
 	/// </summary>
 	public static class ExtIEnumerator
 	{
 		/// <summary>
-		///		Allows an <see cref="IEnumerator"/> to be foreach'd. Not to be called manually.
+		///     Allows an <see cref="IEnumerator" /> to be foreach'd. Not to be called manually.
 		/// </summary>
 		public static IEnumerator GetEnumerator(this IEnumerator @this)
 		{
@@ -17,7 +17,7 @@ namespace Stratum.Extensions
 		}
 
 		/// <summary>
-		///		Try-finally block for <see cref="IEnumerator"/>
+		///     Try-finally block for <see cref="IEnumerator" />
 		/// </summary>
 		/// <param name="this"></param>
 		/// <param name="finally">The method to call once the enumerator has finished or thrown an exception</param>
@@ -48,11 +48,13 @@ namespace Stratum.Extensions
 		}
 
 		/// <summary>
-		///		Try-catch block for <see cref="IEnumerator"/>. This overload allows for re-throwing.
+		///     Try-catch block for <see cref="IEnumerator" />. This overload allows for re-throwing.
 		/// </summary>
 		/// <param name="this"></param>
-		/// <param name="catch">The method to call once the exception has been thrown. Return <see langword="true"/> to re-throw the
-		/// exception.</param>
+		/// <param name="catch">
+		///     The method to call once the exception has been thrown. Return <see langword="true" /> to re-throw the
+		///     exception.
+		/// </param>
 		/// <typeparam name="TException">The type of exception to catch</typeparam>
 		public static IEnumerator TryCatch<TException>(this IEnumerator @this, Func<TException, bool> @catch) where TException : Exception
 		{
@@ -76,7 +78,7 @@ namespace Stratum.Extensions
 		}
 
 		/// <summary>
-		///		Try-catch block for <see cref="IEnumerator"/>. This overload swallows the exception
+		///     Try-catch block for <see cref="IEnumerator" />. This overload swallows the exception
 		/// </summary>
 		/// <param name="this"></param>
 		/// <param name="catch">The method to call once the exception has been thrown</param>
@@ -91,18 +93,20 @@ namespace Stratum.Extensions
 		}
 
 		/// <summary>
-		///		Try-catch block for <see cref="IEnumerator"/>. This overload catches all exceptions and allows for re-throwing.
+		///     Try-catch block for <see cref="IEnumerator" />. This overload catches all exceptions and allows for re-throwing.
 		/// </summary>
 		/// <param name="this"></param>
-		/// <param name="catch">The method to call once the exception has been thrown. Return <see langword="true"/> to re-throw the
-		/// exception.</param>
+		/// <param name="catch">
+		///     The method to call once the exception has been thrown. Return <see langword="true" /> to re-throw the
+		///     exception.
+		/// </param>
 		public static IEnumerator TryCatch(this IEnumerator @this, Func<Exception, bool> @catch)
 		{
 			return @this.TryCatch<Exception>(@catch);
 		}
 
 		/// <summary>
-		///		Try-catch block for <see cref="IEnumerator"/>. This overload catches all exceptions and swallows the exception
+		///     Try-catch block for <see cref="IEnumerator" />. This overload catches all exceptions and swallows the exception
 		/// </summary>
 		/// <param name="this"></param>
 		/// <param name="catch">The method to call once the exception has been thrown</param>
@@ -112,7 +116,7 @@ namespace Stratum.Extensions
 		}
 
 		/// <summary>
-		///		Merges two <see cref="IEnumerator"/>s into one
+		///     Merges two <see cref="IEnumerator" />s into one
 		/// </summary>
 		/// <param name="this"></param>
 		/// <param name="continuation">The enumerator to enumerate after this enumerator finishes</param>
@@ -126,7 +130,7 @@ namespace Stratum.Extensions
 		}
 
 		/// <summary>
-		///		Runs an action after an <see cref="IEnumerator"/> finishes
+		///     Runs an action after an <see cref="IEnumerator" /> finishes
 		/// </summary>
 		/// <param name="this"></param>
 		/// <param name="continuation">The action to run after this enumerator finishes</param>

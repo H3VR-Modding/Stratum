@@ -9,12 +9,12 @@ using UnityEngine;
 namespace Stratum.Jobs
 {
 	/// <summary>
-	///		A collection of jobs to be ran
+	///     A collection of jobs to be ran
 	/// </summary>
 	public abstract class Pipeline<TRet, TSelf> where TSelf : Pipeline<TRet, TSelf>
 	{
 		/// <summary>
-		///		Constructs an instance of <see cref="Pipeline{TRet,TSelf}"/>
+		///     Constructs an instance of <see cref="Pipeline{TRet,TSelf}" />
 		/// </summary>
 		/// <param name="parent">The pipeline that will execute this pipeline</param>
 		protected Pipeline(TSelf parent)
@@ -23,32 +23,32 @@ namespace Stratum.Jobs
 		}
 
 		/// <summary>
-		///		Constructs an instance of <see cref="Pipeline{TRet,TSelf}"/>
+		///     Constructs an instance of <see cref="Pipeline{TRet,TSelf}" />
 		/// </summary>
 		public Pipeline() { }
 
 		/// <summary>
-		///		The pipeline that will execute this pipeline
+		///     The pipeline that will execute this pipeline
 		/// </summary>
 		public TSelf? Parent { get; }
 
 		/// <summary>
-		///		The jobs to execute
+		///     The jobs to execute
 		/// </summary>
 		public List<Job<TRet>> Jobs { get; } = new();
 
 		/// <summary>
-		///		The name to display in logs
+		///     The name to display in logs
 		/// </summary>
 		public string? Name { get; set; }
 
 		/// <summary>
-		///		Creates a pipeline with its parent as this pipeline
+		///     Creates a pipeline with its parent as this pipeline
 		/// </summary>
 		protected abstract TSelf CreateNested();
 
 		/// <summary>
-		///		Sets <see cref="Name"/>
+		///     Sets <see cref="Name" />
 		/// </summary>
 		/// <param name="name">The name to display in logs</param>
 		public TSelf WithName(string? name)
@@ -58,7 +58,7 @@ namespace Stratum.Jobs
 		}
 
 		/// <summary>
-		///		Adds a job to <see cref="Jobs"/>
+		///     Adds a job to <see cref="Jobs" />
 		/// </summary>
 		/// <param name="job">The job to add</param>
 		public TSelf AddJob(Job<TRet> job)
@@ -68,7 +68,7 @@ namespace Stratum.Jobs
 		}
 
 		/// <summary>
-		///		Adds a pipeline, which will be executed as a job
+		///     Adds a pipeline, which will be executed as a job
 		/// </summary>
 		/// <param name="nested">Modifiers to apply to the pipeline</param>
 		/// <param name="builder">How the pipeline should be ran</param>
@@ -82,7 +82,7 @@ namespace Stratum.Jobs
 		}
 
 		/// <summary>
-		///		Displays the full hierarchy of this pipeline
+		///     Displays the full hierarchy of this pipeline
 		/// </summary>
 		public override string ToString()
 		{
@@ -106,13 +106,13 @@ namespace Stratum.Jobs
 	}
 
 	/// <summary>
-	///		A collection of jobs to be ran
+	///     A collection of jobs to be ran
 	/// </summary>
 	public sealed class Pipeline<TRet> : Pipeline<TRet, Pipeline<TRet>>
 	{
 		private Pipeline(Pipeline<TRet> parent) : base(parent) { }
 
-		/// <inheritdoc cref="Pipeline{TRet,TSelf}.CreateNested"/>
+		/// <inheritdoc cref="Pipeline{TRet,TSelf}.CreateNested" />
 		protected override Pipeline<TRet> CreateNested()
 		{
 			return new(this);
@@ -120,7 +120,7 @@ namespace Stratum.Jobs
 	}
 
 	/// <summary>
-	///		Type specific methods for <see cref="Pipeline{TRet,TSelf}"/>
+	///     Type specific methods for <see cref="Pipeline{TRet,TSelf}" />
 	/// </summary>
 	public static class ExtPipeline
 	{
@@ -177,7 +177,7 @@ namespace Stratum.Jobs
 		}
 
 		/// <summary>
-		///		Adds a nested pipeline, which is built using the default setup builder
+		///     Adds a nested pipeline, which is built using the default setup builder
 		/// </summary>
 		/// <param name="this"></param>
 		/// <param name="nested">Modifiers to apply to the pipeline</param>
@@ -187,7 +187,7 @@ namespace Stratum.Jobs
 		}
 
 		/// <summary>
-		///		Adds a nested pipeline, which is built using the sequential runtime builder
+		///     Adds a nested pipeline, which is built using the sequential runtime builder
 		/// </summary>
 		/// <param name="this"></param>
 		/// <param name="nested">Modifiers to apply to the pipeline</param>
@@ -196,12 +196,12 @@ namespace Stratum.Jobs
 			return @this.AddNested(nested, RuntimeSequentialBuilder);
 		}
 
-		///  <summary>
-		/// 		Adds a nested pipeline, which is built using the parallel runtime builder
-		///  </summary>
-		///  <param name="this"></param>
-		///  <param name="nested">Modifiers to apply to the pipeline</param>
-		///  <param name="startCoroutine">The method to start Unity coroutines with</param>
+		/// <summary>
+		///     Adds a nested pipeline, which is built using the parallel runtime builder
+		/// </summary>
+		/// <param name="this"></param>
+		/// <param name="nested">Modifiers to apply to the pipeline</param>
+		/// <param name="startCoroutine">The method to start Unity coroutines with</param>
 		public static TSelf AddNestedParallel<TSelf>(this TSelf @this, Action<TSelf> nested, CoroutineStarter startCoroutine)
 			where TSelf : Pipeline<IEnumerator, TSelf>
 		{
@@ -209,7 +209,7 @@ namespace Stratum.Jobs
 		}
 
 		/// <summary>
-		///		Creates a job to run the pipeline using the default setup builder
+		///     Creates a job to run the pipeline using the default setup builder
 		/// </summary>
 		/// <param name="this"></param>
 		public static Job<Empty> Build<TSelf>(this TSelf @this) where TSelf : Pipeline<Empty, TSelf>
@@ -218,7 +218,7 @@ namespace Stratum.Jobs
 		}
 
 		/// <summary>
-		///		Creates a job to run the pipeline using the sequential runtime builder
+		///     Creates a job to run the pipeline using the sequential runtime builder
 		/// </summary>
 		/// <param name="this"></param>
 		public static Job<IEnumerator> BuildSequential<TSelf>(this TSelf @this) where TSelf : Pipeline<IEnumerator, TSelf>
@@ -227,10 +227,10 @@ namespace Stratum.Jobs
 		}
 
 		/// <summary>
-		///		Creates a job to run the pipeline using the parallel runtime builder
+		///     Creates a job to run the pipeline using the parallel runtime builder
 		/// </summary>
 		/// <param name="this"></param>
-		///  <param name="startCoroutine">The method to start Unity coroutines with</param>
+		/// <param name="startCoroutine">The method to start Unity coroutines with</param>
 		public static Job<IEnumerator> BuildParallel<TSelf>(this TSelf @this, CoroutineStarter startCoroutine)
 			where TSelf : Pipeline<IEnumerator, TSelf>
 		{
