@@ -2,14 +2,14 @@
 
   <PropertyGroup>
     <Version>1.0.0</Version>
-    
+
     <TargetFramework>net35</TargetFramework>
     <LangVersion>9</LangVersion>
     <Nullable>enable</Nullable>
 
     <PackageOutputPath>./nupkg</PackageOutputPath>
-    
-    <Authors>ash-hat</Authors>
+
+    <Authors>Stratum Team</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <Description>A lite stage and asset management framework, designed with Thunderstore in mind.</Description>
@@ -28,7 +28,7 @@
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DocumentationFile>bin\Release\net35\Stratum.xml</DocumentationFile>
   </PropertyGroup>
