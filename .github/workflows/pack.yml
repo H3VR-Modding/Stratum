@@ -1,0 +1,34 @@
+name: Pack
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  src:
+    name: Package Stratum
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+
+      - name: Pack project
+        run: dotnet pack --configuration Release Stratum
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Stratum
+          path: |
+            Stratum/nupkg/*.nupkg
+            Stratum/nupkg/*.snupkg

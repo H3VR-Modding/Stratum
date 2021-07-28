@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="1280"
+   height="640"
+   viewBox="0 0 338.66666 169.33334"
+   version="1.1"
+   id="svg186822"
+   inkscape:version="1.1 (c4e8f9ed74, 2021-05-24)"
+   sodipodi:docname="inkscape.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview186824"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="true"
+     units="px"
+     inkscape:zoom="0.77771465"
+     inkscape:cx="651.26715"
+     inkscape:cy="392.17469"
+     inkscape:window-width="2560"
+     inkscape:window-height="1371"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg186822">
+    <inkscape:grid
+       type="xygrid"
+       id="grid187224"
+       spacingx="5.2916667"
+       spacingy="5.2916667"
+       empspacing="4" />
+  </sodipodi:namedview>
+  <defs
+     id="defs186819" />
+  <path
+     id="rect3593"
+     style="display:inline;fill:#322d2d;fill-opacity:1;stroke:#eee5bf;stroke-width:16.9333;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="m 15.875,0 h 306.91667 c 10.58333,0 15.875,5.2916667 15.875,15.875 l 0,137.58333 c 0,10.58334 -5.29167,15.875 -15.875,15.875 H 15.875 C 5.2916667,169.33333 0,164.04167 0,153.45833 V 15.875 C 0,5.2916667 5.2916667,0 15.875,0 Z"
+     sodipodi:nodetypes="ccccccccc" />
+  <image
+     preserveAspectRatio="none"
+     inkscape:svg-dpi="96"
+     width="169.36057"
+     height="169.36057"
+     xlink:href="../letter.svg"
+     id="image186916"
+     x="84.653053"
+     y="0.0016260291" />
+</svg>
