@@ -22,11 +22,11 @@ jobs:
       - name: Build
         run: dotnet build -c Release Stratum
 
-      - name: Pack Thunderstore
-        run: ./pack.sh Stratum/nupkg/Thunderstore.zip
-
       - name: Pack NuGet
         run: dotnet pack -c Release --no-build Stratum
+
+      - name: Pack Thunderstore
+        run: ./pack.sh Stratum/nupkg/Thunderstore.zip
 
       - name: Upload
         uses: actions/upload-artifact@v2
