@@ -23,7 +23,7 @@ jobs:
         run: dotnet build -c Release Stratum
 
       - name: Pack Thunderstore
-        run: ./pack.sh Thunderstore.zip
+        run: ./pack.sh Stratum/nupkg/Thunderstore.zip
 
       - name: Pack NuGet
         run: dotnet pack -c Release --no-build Stratum
@@ -33,6 +33,6 @@ jobs:
         with:
           name: Stratum
           path: |
-            Thunderstore.zip
+            Stratum/nupkg/Thunderstore.zip
             Stratum/nupkg/*.nupkg
             Stratum/nupkg/*.snupkg
