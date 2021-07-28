@@ -99,8 +99,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.56445313"
-     inkscape:cx="858.35294"
-     inkscape:cy="164.76125"
+     inkscape:cx="858.35293"
+     inkscape:cy="164.76124"
      inkscape:document-units="mm"
      inkscape:current-layer="svg1013"
      inkscape:document-rotation="0"
@@ -176,5 +176,7 @@
      sodipodi:nodetypes="cccsscsscsscccccscscscsccc"
      inkscape:export-filename="/home/ash/Development/csharp/Stratum/media/icon/1024.png"
      inkscape:export-xdpi="96"
-     inkscape:export-ydpi="96" />
+     inkscape:export-ydpi="96"
+     inkscape:label="S"
+     sodipodi:insensitive="true" />
 </svg>

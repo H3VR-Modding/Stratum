@@ -10,8 +10,10 @@
    inkscape:export-filename="/home/ash/Development/csharp/Stratum/media/icon/128.png"
    inkscape:export-xdpi="12"
    inkscape:export-ydpi="12"
+   inkscape:label="S"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -99,8 +101,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.79825726"
-     inkscape:cx="667.07818"
-     inkscape:cy="571.24441"
+     inkscape:cx="590.66171"
+     inkscape:cy="593.79353"
      inkscape:document-units="mm"
      inkscape:current-layer="svg1013"
      inkscape:document-rotation="0"
@@ -173,13 +175,19 @@
      id="rect3593"
      style="display:inline;fill:#322d2d;fill-opacity:1;stroke:#eee5bf;stroke-width:16.9333;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
      d="M 16.933333,0 H 254 c 8.46666,0 16.93333,8.4666666 16.93333,16.933333 V 254 c 0,8.46666 -8.46667,16.93333 -16.93333,16.93333 H 16.933333 C 8.4666666,270.93333 0,262.46666 0,254 V 16.933333 C 0,8.4666666 8.4666666,0 16.933333,0 Z"
-     sodipodi:nodetypes="ccccccccc" />
-  <path
-     d="m 25.4,220.13333 c -10e-7,0 25.566548,-36.09788 28.859347,-42.68348 3.442471,-6.58559 6.73527,-14.2189 9.878396,-22.89992 10.626759,6.13658 22.974755,10.92611 37.043987,14.36858 14.06923,3.44247 22.16145,4.64816 34.28494,4.64816 12.42283,0 26.18281,-0.53216 31.27168,-2.62758 5.08887,-2.24509 7.63331,-4.63985 7.63331,-7.18429 0,-9.13003 -13.91956,-13.69505 -41.75867,-13.69505 -30.53323,0 -52.684781,-3.14312 -66.454666,-9.42937 -13.769885,-6.43593 -20.654828,-16.76334 -20.654828,-30.98225 0,-20.205808 8.381669,-35.098238 25.145008,-44.677289 16.763339,-9.579051 38.026756,-14.17084 64.818166,-14.17084 0,0 110.06666,0 110.06666,0 -4.34051,9.878397 -26.18503,43.955703 -30.97456,58.174609 -0.89803,2.99345 -1.6464,5.23854 -2.24509,6.73527 -7.63331,-6.13658 -19.1581,-11.22545 -34.57438,-15.26662 -15.41629,-4.190832 -30.4485,-7.309927 -42.27264,-7.309927 -14.21891,0 -22.38596,1.996551 -27.32515,3.942296 -4.9392,1.796073 -7.4088,4.490181 -7.4088,8.082321 0,3.59215 3.36763,6.51076 10.1029,8.75585 6.88495,2.09542 16.76334,3.14313 29.63519,3.14313 31.73061,0 54.7802,3.66698 69.14877,11.00094 14.36858,7.18429 21.55287,18.26006 21.55287,33.22733 0,20.95417 -7.63331,36.07111 -22.89992,45.35082 -15.26661,9.13003 -41.82361,13.49731 -72.80585,13.49731 -33.27349,-0.80681 -110.06667,0 -110.06667,0 z"
-     style="font-family:'Dela Gothic One';-inkscape-font-specification:'Dela Gothic One';fill:#c26a47;fill-opacity:1;stroke:#eee5bf;stroke-width:8.46667;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     id="path153305"
-     sodipodi:nodetypes="cccsscsscsscccccscscscsccc"
-     inkscape:export-filename="/home/ash/Development/csharp/Stratum/media/icon/1024.png"
-     inkscape:export-xdpi="96"
-     inkscape:export-ydpi="96" />
+     sodipodi:nodetypes="ccccccccc"
+     inkscape:label="Background"
+     sodipodi:insensitive="true" />
+  <image
+     preserveAspectRatio="none"
+     inkscape:svg-dpi="96"
+     width="270.93332"
+     height="270.93332"
+     xlink:href="../letter.svg"
+     id="image187779"
+     x="0"
+     y="0"
+     style="display:inline"
+     inkscape:label="S"
+     sodipodi:insensitive="true" />
 </svg>
