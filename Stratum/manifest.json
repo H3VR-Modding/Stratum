@@ -1,0 +1,10 @@
+{
+  "author": "Stratum",
+  "name": "Stratum",
+  "version_number": "1.0.0",
+  "description": "A lite stage and asset management framework, designed with Thunderstore in mind.",
+  "dependencies": [
+    "BepInEx-BepInExPack_H3VR-5.4.1100"
+  ],
+  "website_url": "https://github.com/H3VR-Modding/Stratum"
+}
