@@ -7,6 +7,7 @@ namespace Stratum
 	/// <summary>
 	///     A simple implementation of <see cref="IStratumPlugin" />, ready to be inherited
 	/// </summary>
+	[BepInDependency(StratumRoot.GUID, StratumRoot.Version)]
 	public abstract class StratumPlugin : BaseUnityPlugin, IStratumPlugin
 	{
 		/// <summary>
