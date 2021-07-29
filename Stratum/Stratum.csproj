@@ -12,6 +12,7 @@
     <Authors>Stratum Team</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <PackageProjectUrl>https://github.com/H3VR-Modding/Stratum</PackageProjectUrl>
     <Description>A lite stage and asset management framework, designed with Thunderstore in mind.</Description>
     <PackageTags>assets asset management bepinex stratum</PackageTags>
     <PackageIcon>icon.png</PackageIcon>
