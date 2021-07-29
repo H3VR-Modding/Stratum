@@ -7,7 +7,6 @@ using Stratum.Jobs;
 namespace Example.Assets
 {
 	[BepInPlugin("stratum.example.assets", "Stratum Example (Assets)", StratumRoot.Version)]
-	[BepInDependency(StratumRoot.GUID, StratumRoot.Version)]
 	[BepInDependency(LoadersPlugin, StratumRoot.Version)]
 	public class ExampleAssetsPlugin : StratumPlugin
 	{
@@ -51,9 +50,7 @@ namespace Example.Assets
 				.BuildParallel(StartCoroutine);
 
 			// Runs the pipeline
-			// Use foreach on the IEnumerator instead of yield return, as it propagates the exception (i.e. allows it to be handled properly)
-			foreach (object? item in assets(ctx.Stage, Logger))
-				yield return item;
+			return assets(ctx.Stage, Logger);
 		}
 	}
 }

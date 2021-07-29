@@ -8,7 +8,6 @@ using Stratum.Extensions;
 namespace Example.Loaders
 {
 	[BepInPlugin("stratum.example.loaders", "Stratum Example (Loaders)", StratumRoot.Version)]
-	[BepInDependency(StratumRoot.GUID, StratumRoot.Version)]
 	public class ExampleLoadersPlugin : StratumPlugin
 	{
 		private const string PrintLoaderName = "print";
@@ -28,6 +27,8 @@ namespace Example.Loaders
 		}
 
 		private event Action? OnDestroyed;
+
+		#region Stratum Callbacks
 
 		public override void OnSetup(IStageContext<Empty> ctx)
 		{
@@ -51,6 +52,8 @@ namespace Example.Loaders
 
 			yield break;
 		}
+
+		#endregion
 
 		private void InitFrames()
 		{
