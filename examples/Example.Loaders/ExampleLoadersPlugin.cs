@@ -8,6 +8,7 @@ using Stratum.Extensions;
 namespace Example.Loaders
 {
 	[BepInPlugin("stratum.example.loaders", "Stratum Example (Loaders)", StratumRoot.Version)]
+	[BepInDependency(StratumRoot.GUID, StratumRoot.Version)]
 	public class ExampleLoadersPlugin : StratumPlugin
 	{
 		private const string PrintLoaderName = "print";

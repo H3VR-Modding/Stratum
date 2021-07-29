@@ -7,6 +7,7 @@ using Stratum.Jobs;
 namespace Example.Assets
 {
 	[BepInPlugin("stratum.example.assets", "Stratum Example (Assets)", StratumRoot.Version)]
+	[BepInDependency(StratumRoot.GUID, StratumRoot.Version)]
 	[BepInDependency(LoadersPlugin, StratumRoot.Version)]
 	public class ExampleAssetsPlugin : StratumPlugin
 	{
