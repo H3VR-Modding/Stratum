@@ -24,7 +24,7 @@ namespace Stratum
 		// 'Version' should be intentionally rough to prevent people from baking in the full Stratum version in places other than the
 		// dependency attribute too. If a plugin is built on 1.0.0, and 1.0.1 releases, the plugin would still think its 1.0.0 because
 		// 'Version' is a constant.
-		private const string ExactVersion = MajorMinorVersion + "0";
+		private const string ExactVersion = MajorMinorVersion + "1";
 
 		/// <summary>
 		///     The BepInEx GUID used by Stratum
