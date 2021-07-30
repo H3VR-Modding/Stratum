@@ -38,26 +38,6 @@ namespace Stratum
 
 		private static StratumRoot? _instance;
 
-		private readonly List<IStratumPlugin> _plugins = new();
-		private bool _started;
-
-		private void Awake()
-		{
-			_instance = this;
-
-			ChainloaderLogListener listener = new();
-
-			void Callback()
-			{
-				listener.Callback -= Callback;
-				Load();
-			}
-
-			listener.Callback += Callback;
-
-			BepInEx.Logging.Logger.Listeners.Add(listener);
-		}
-
 		/// <summary>
 		///     Adds a plugin to Stratum, allowing it to utilize all the benefits of the Stratum ecosystem
 		/// </summary>
@@ -70,6 +50,20 @@ namespace Stratum
 					"Stratum has not yet initialised! Please ensure your BepInEx plugin depends on 'stratum'.");
 
 			_instance.InjectInstance(plugin);
+		}
+
+		private readonly List<IStratumPlugin> _plugins = new();
+
+		private bool _started;
+		private ChainloaderLogListener? _listener;
+
+		private void Awake()
+		{
+			_instance = this;
+
+			_listener = new ChainloaderLogListener(Load);
+
+			BepInEx.Logging.Logger.Listeners.Add(_listener);
 		}
 
 		private Graph<IStratumPlugin, bool> PluginsToGraph()
@@ -101,9 +95,17 @@ namespace Stratum
 			return graph;
 		}
 
+		private IEnumerator UnsubscribeLog()
+		{
+			yield return null;
+
+			BepInEx.Logging.Logger.Listeners.Remove(_listener);
+		}
+
 		private void Load()
 		{
 			_started = true;
+			StartCoroutine(UnsubscribeLog());
 
 			// ggez
 			if (_plugins.Count == 0)
@@ -173,18 +175,17 @@ namespace Stratum
 
 		private class ChainloaderLogListener : ILogListener
 		{
-			public event Action? Callback;
+			private readonly Action _callback;
+
+			public ChainloaderLogListener(Action callback)
+			{
+				_callback = callback;
+			}
 
 			public void LogEvent(object sender, LogEventArgs eventArgs)
 			{
-				if (eventArgs.Source.SourceName != "BepInEx" || eventArgs.Data.ToString() != "Chainloader startup complete")
-					return;
-
-				// VERY IMPORTANT
-				// Remove the listener BEFORE invoking callback
-				// The callback might use a logger, which would call this again, causing a recursive loop
-				BepInEx.Logging.Logger.Listeners.Remove(this);
-				Callback?.Invoke();
+				if (eventArgs is {Source: {SourceName: "BepInEx"}, Data: "Chainloader startup complete"})
+					_callback();
 			}
 
 			public void Dispose() { }
