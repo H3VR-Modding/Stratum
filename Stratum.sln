@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.Assets", "examples\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{A02C0767-3140-4212-9997-43FF2B5C01FB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stratum.Tests", "Stratum.Tests\Stratum.Tests.csproj", "{1CAE8956-2378-449C-AAF9-E8FEA9186794}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,6 +62,18 @@ Global
 		{D5D992A9-21F7-49D7-A809-2EDAC12634B2}.Release|x64.Build.0 = Release|Any CPU
 		{D5D992A9-21F7-49D7-A809-2EDAC12634B2}.Release|x86.ActiveCfg = Release|Any CPU
 		{D5D992A9-21F7-49D7-A809-2EDAC12634B2}.Release|x86.Build.0 = Release|Any CPU
+		{1CAE8956-2378-449C-AAF9-E8FEA9186794}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CAE8956-2378-449C-AAF9-E8FEA9186794}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CAE8956-2378-449C-AAF9-E8FEA9186794}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1CAE8956-2378-449C-AAF9-E8FEA9186794}.Debug|x64.Build.0 = Debug|Any CPU
+		{1CAE8956-2378-449C-AAF9-E8FEA9186794}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1CAE8956-2378-449C-AAF9-E8FEA9186794}.Debug|x86.Build.0 = Debug|Any CPU
+		{1CAE8956-2378-449C-AAF9-E8FEA9186794}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CAE8956-2378-449C-AAF9-E8FEA9186794}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CAE8956-2378-449C-AAF9-E8FEA9186794}.Release|x64.ActiveCfg = Release|Any CPU
+		{1CAE8956-2378-449C-AAF9-E8FEA9186794}.Release|x64.Build.0 = Release|Any CPU
+		{1CAE8956-2378-449C-AAF9-E8FEA9186794}.Release|x86.ActiveCfg = Release|Any CPU
+		{1CAE8956-2378-449C-AAF9-E8FEA9186794}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D5D992A9-21F7-49D7-A809-2EDAC12634B2} = {A02C0767-3140-4212-9997-43FF2B5C01FB}
