@@ -85,7 +85,7 @@ namespace Stratum
 					if (!nodes.TryGetValue(reference.DependencyGUID, out Graph<IStratumPlugin, bool>.Node? resolved))
 						continue;
 
-					bool isHard = reference.Flags.HasFlag(BepInDependency.DependencyFlags.HardDependency);
+					bool isHard = reference.Flags.HasFlagFast(BepInDependency.DependencyFlags.HardDependency);
 					node.Attach(resolved, isHard);
 				}
 
