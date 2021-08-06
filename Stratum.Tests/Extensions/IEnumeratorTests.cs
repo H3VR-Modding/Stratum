@@ -13,21 +13,14 @@ namespace Stratum.Tests.Extensions
 	[SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
 	public class ExtIEnumeratorTests
 	{
-		private static IEnumerable<int> ThrowSet(IEnumerable<int> set)
+		[Fact]
+		public void GetEnumerator_ReturnsSelf()
 		{
-			foreach (int item in set)
-				yield return item;
+			IEnumerator enumerator = Enumerable.Range(0, 10).GetEnumerator();
 
-			throw new TestException();
-		}
+			IEnumerator ret = enumerator.GetEnumerator();
 
-		private void AssertEqualEnumerators(IEnumerator expected, IEnumerator actual)
-		{
-			bool moveExpected, moveActual;
-			while ((moveExpected = expected.MoveNext()) & (moveActual = actual.MoveNext()))
-				Assert.Equal(expected.Current, actual.Current);
-
-			Assert.Equal(moveExpected, moveActual);
+			Assert.Equal(enumerator, ret);
 		}
 
 		[Fact]
@@ -39,8 +32,9 @@ namespace Stratum.Tests.Extensions
 
 			IEnumerator ret = enumerator.ContinueWith(continuation.Object);
 
-			AssertEqualEnumerators(set.GetEnumerator(), ret);
+			ret.AssertEqual(set);
 			continuation.Verify(x => x(), Times.Once);
+			continuation.VerifyNoOtherCalls();
 		}
 
 		[Fact]
@@ -53,7 +47,7 @@ namespace Stratum.Tests.Extensions
 
 			IEnumerator ret = firstEnumerator.ContinueWith(secondEnumerator);
 
-			AssertEqualEnumerators(first.Concat(second).GetEnumerator(), ret);
+			ret.AssertEqual(first.Concat(second));
 		}
 
 		[Fact]
@@ -61,12 +55,11 @@ namespace Stratum.Tests.Extensions
 		{
 			IEnumerable<int> set = Enumerable.Range(0, 10);
 			IEnumerator enumerator = set.GetEnumerator();
-			Mock<Action<Exception>> @catch = new();
+			Action<Exception> @catch = Mock.Of<Action<Exception>>(MockBehavior.Strict);
 
-			IEnumerator ret = enumerator.TryCatch(@catch.Object);
+			IEnumerator ret = enumerator.TryCatch(@catch);
 
-			AssertEqualEnumerators(set.GetEnumerator(), ret);
-			@catch.VerifyNoOtherCalls();
+			ret.AssertEqual(set);
 		}
 
 		[Fact]
@@ -74,15 +67,14 @@ namespace Stratum.Tests.Extensions
 		{
 			IEnumerable<int> set = Enumerable.Range(0, 10);
 
-			IEnumerator enumerator = ThrowSet(set).GetEnumerator();
-			Mock<Action<Exception>> @catch = new(MockBehavior.Strict);
-			Expression<Action<Action<Exception>>> invoke = x => x(It.IsAny<TestException>());
-			@catch.Setup(invoke).Verifiable();
+			IEnumerator enumerator = set.EndWithThrow();
+			Mock<Action<Exception>> @catch = new();
 
 			IEnumerator ret = enumerator.TryCatch(@catch.Object);
 
-			AssertEqualEnumerators(set.GetEnumerator(), ret);
-			@catch.Verify(invoke, Times.Once);
+			ret.AssertEqual(set);
+			@catch.Verify(x => x(It.IsAny<TestException>()), Times.Once);
+			@catch.VerifyNoOtherCalls();
 		}
 
 		[Fact]
@@ -90,48 +82,48 @@ namespace Stratum.Tests.Extensions
 		{
 			IEnumerable<int> set = Enumerable.Range(0, 10);
 			IEnumerator enumerator = set.GetEnumerator();
-			Mock<Func<Exception, bool>> @catch = new(MockBehavior.Strict);
+			Func<Exception, bool> @catch = Mock.Of<Func<Exception, bool>>(MockBehavior.Strict);
 
-			IEnumerator ret = enumerator.TryCatch(@catch.Object);
+			IEnumerator ret = enumerator.TryCatch(@catch);
 
-			AssertEqualEnumerators(set.GetEnumerator(), ret);
-			@catch.VerifyNoOtherCalls();
+			ret.AssertEqual(set);
 		}
 
 		[Fact]
 		public void TryCatch_Func_Throw_Catch()
 		{
 			IEnumerable<int> set = Enumerable.Range(0, 10);
-
-			IEnumerator enumerator = ThrowSet(set).GetEnumerator();
-			Mock<Func<Exception, bool>> @catch = new(MockBehavior.Strict);
 			Expression<Func<Func<Exception, bool>, bool>> invoke = x => x(It.IsAny<TestException>());
+
+			IEnumerator enumerator = set.EndWithThrow();
+			Mock<Func<Exception, bool>> @catch = new();
 			@catch.Setup(invoke)
-				.Returns(false)
-				.Verifiable();
+				.Returns(false);
 
 			IEnumerator ret = enumerator.TryCatch(@catch.Object);
 
-			AssertEqualEnumerators(set.GetEnumerator(), ret);
+			ret.AssertEqual(set);
 			@catch.Verify(invoke, Times.Once);
+			@catch.VerifyNoOtherCalls();
 		}
 
 		[Fact]
 		public void TryCatch_Func_Throw_Rethrow()
 		{
 			IEnumerable<int> set = Enumerable.Range(0, 10);
-
-			IEnumerator enumerator = ThrowSet(set).GetEnumerator();
-			Mock<Func<Exception, bool>> @catch = new(MockBehavior.Strict);
 			Expression<Func<Func<Exception, bool>, bool>> invoke = x => x(It.IsAny<TestException>());
+
+			IEnumerator enumerator = set.EndWithThrow();
+			Mock<Func<Exception, bool>> @catch = new();
 			@catch.Setup(invoke)
 				.Returns(true)
 				.Verifiable();
 
 			IEnumerator ret = enumerator.TryCatch(@catch.Object);
 
-			Assert.Throws<TestException>(() => AssertEqualEnumerators(set.GetEnumerator(), ret));
+			Assert.Throws<TestException>(() => ret.AssertEqual(set));
 			@catch.Verify(invoke, Times.Once);
+			@catch.VerifyNoOtherCalls();
 		}
 
 		[Fact]
@@ -139,14 +131,13 @@ namespace Stratum.Tests.Extensions
 		{
 			IEnumerable<int> set = Enumerable.Range(0, 10);
 			IEnumerator enumerator = set.GetEnumerator();
-			Mock<Action> @finally = new(MockBehavior.Strict);
-			Expression<Action<Action>> invoke = x => x();
-			@finally.Setup(invoke).Verifiable();
+			Mock<Action> @finally = new();
 
 			IEnumerator ret = enumerator.TryFinally(@finally.Object);
 
-			AssertEqualEnumerators(set.GetEnumerator(), ret);
-			@finally.Verify(invoke, Times.Once);
+			ret.AssertEqual(set);
+			@finally.Verify(x => x(), Times.Once);
+			@finally.VerifyNoOtherCalls();
 		}
 
 		[Fact]
@@ -154,15 +145,14 @@ namespace Stratum.Tests.Extensions
 		{
 			IEnumerable<int> set = Enumerable.Range(0, 10);
 
-			IEnumerator enumerator = ThrowSet(set).GetEnumerator();
-			Mock<Action> @finally = new(MockBehavior.Strict);
-			Expression<Action<Action>> invoke = x => x();
-			@finally.Setup(invoke).Verifiable();
+			IEnumerator enumerator = set.EndWithThrow();
+			Mock<Action> @finally = new();
 
 			IEnumerator ret = enumerator.TryFinally(@finally.Object);
 
-			Assert.Throws<TestException>(() => AssertEqualEnumerators(set.GetEnumerator(), ret));
-			@finally.Verify(invoke, Times.Once);
+			Assert.Throws<TestException>(() => ret.AssertEqual(set));
+			@finally.Verify(x => x(), Times.Once);
+			@finally.VerifyNoOtherCalls();
 		}
 	}
 }

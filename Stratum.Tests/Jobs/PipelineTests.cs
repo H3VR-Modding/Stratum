@@ -15,13 +15,13 @@ namespace Stratum.Tests
 
 		[Fact]
 		[SuppressMessage("ReSharper", "ObjectCreationAsStatement")]
-		public void Ctor_NoArgs()
+		private void Ctor_NoArgs()
 		{
 			new Pipeline<Empty>();
 		}
 
 		[Fact]
-		public void AddJob_ReturnsSelf()
+		private void AddJob_ReturnsSelf()
 		{
 			Pipeline<Empty> pipeline = new();
 
@@ -31,7 +31,7 @@ namespace Stratum.Tests
 		}
 
 		[Fact]
-		public void AddJob_AddsJobToList()
+		private void AddJob_AddsJobToList()
 		{
 			Pipeline<Empty> pipeline = new();
 			Job<Empty> job = EmptyJob;
@@ -42,7 +42,7 @@ namespace Stratum.Tests
 		}
 
 		[Fact]
-		public void AddNested_ReturnsSelf()
+		private void AddNested_ReturnsSelf()
 		{
 			Pipeline<Empty> pipeline = new();
 
@@ -52,7 +52,7 @@ namespace Stratum.Tests
 		}
 
 		[Fact]
-		public void AddNested_NestedIsParent()
+		private void AddNested_NestedIsParent()
 		{
 			Pipeline<Empty> pipeline = new();
 			Pipeline<Empty>? nested = null;
@@ -64,7 +64,7 @@ namespace Stratum.Tests
 		}
 
 		[Fact]
-		public void AddNested_PipelineIsPassedToBuilder()
+		private void AddNested_PipelineIsPassedToBuilder()
 		{
 			Pipeline<Empty> pipeline = new();
 			Pipeline<Empty>? nested = null;
@@ -83,10 +83,10 @@ namespace Stratum.Tests
 		}
 
 		[Fact]
-		public void AddNested_AddsJobToList()
+		private void AddNested_AddsJobToList()
 		{
 			Pipeline<Empty> pipeline = new();
-			IStage<Empty> stage = Mock.Of<IStage<Empty>>();
+			IStage<Empty> stage = Mock.Of<IStage<Empty>>(MockBehavior.Strict);
 			ManualLogSource logger = new("fake");
 			var ran = false;
 
@@ -104,7 +104,7 @@ namespace Stratum.Tests
 		}
 
 		[Fact]
-		public void WithName_ReturnsSelf()
+		private void WithName_ReturnsSelf()
 		{
 			Pipeline<Empty> pipeline = new();
 
@@ -118,45 +118,13 @@ namespace Stratum.Tests
 		[InlineData("")]
 		[InlineData(" ")]
 		[InlineData("name")]
-		public void WithName_NameChanged(string? name)
+		private void WithName_NameChanged(string? name)
 		{
 			Pipeline<Empty> pipeline = new();
 
 			pipeline.WithName(name);
 
 			Assert.Equal(name, pipeline.Name);
-		}
-
-		[Theory]
-		[InlineData("")]
-		[InlineData(" ")]
-		[InlineData("name")]
-		public void ToString_UsesName(string root)
-		{
-			Pipeline<Empty> pipeline = new();
-
-			pipeline.WithName(root);
-			string str = pipeline.ToString();
-
-			Assert.Equal(root, str);
-		}
-
-		[Theory]
-		[InlineData("", "")]
-		[InlineData(" ", "")]
-		[InlineData("name", "")]
-		[InlineData("", " ")]
-		[InlineData("", "name")]
-		public void ToString_NestedPathed(string root, string nested)
-		{
-			Pipeline<Empty> pipeline = new();
-
-			string str = null!;
-			pipeline
-				.WithName(root)
-				.AddNested(x => str = x.WithName(nested).ToString(), EmptyBuilder);
-
-			Assert.Equal($"{root}/{nested}", str);
 		}
 	}
 }

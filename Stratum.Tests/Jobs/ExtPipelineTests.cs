@@ -12,10 +12,10 @@ namespace Stratum.Tests
 {
 	public class ExtPipelineTests
 	{
-		public static Action<Pipeline<IEnumerator>> EmptyNestedParallel => _ => { };
+		private static Action<Pipeline<IEnumerator>> EmptyNestedParallel => _ => { };
 
 		[Fact]
-		public void AddNested_ReturnsSelf()
+		private void AddNested_ReturnsSelf()
 		{
 			Pipeline<Empty> pipeline = new();
 
@@ -25,7 +25,7 @@ namespace Stratum.Tests
 		}
 
 		[Fact]
-		public void AddNestedParallel_ReturnsSelf()
+		private void AddNestedParallel_ReturnsSelf()
 		{
 			Pipeline<IEnumerator> pipeline = new();
 
@@ -35,7 +35,7 @@ namespace Stratum.Tests
 		}
 
 		[Fact]
-		public void AddNestedSequential_ReturnsSelf()
+		private void AddNestedSequential_ReturnsSelf()
 		{
 			Pipeline<IEnumerator> pipeline = new();
 
@@ -45,11 +45,11 @@ namespace Stratum.Tests
 		}
 
 		[Fact]
-		public void Build_CallsJobsSequentially()
+		private void Build_CallsJobsSequentially()
 		{
 			var counter = 0;
 			Pipeline<Empty> pipeline = new();
-			IStage<Empty> stage = Mock.Of<IStage<Empty>>();
+			IStage<Empty> stage = Mock.Of<IStage<Empty>>(MockBehavior.Strict);
 			ManualLogSource logger = new("fake");
 
 			for (var i = 0; i < 10; ++i)
@@ -68,11 +68,11 @@ namespace Stratum.Tests
 		}
 
 		[Fact]
-		public void BuildSequential_CallsJobsSequentially()
+		private void BuildSequential_CallsJobsSequentially()
 		{
 			var counter = 0;
 			Pipeline<IEnumerator> pipeline = new();
-			IStage<IEnumerator> stage = Mock.Of<IStage<IEnumerator>>();
+			IStage<IEnumerator> stage = Mock.Of<IStage<IEnumerator>>(MockBehavior.Strict);
 			ManualLogSource logger = new("fake");
 
 			for (var i = 0; i < 10; ++i)

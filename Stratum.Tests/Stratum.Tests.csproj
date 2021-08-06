@@ -26,8 +26,4 @@
       <ProjectReference Include="..\Stratum\Stratum.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Internal" />
-    </ItemGroup>
-
 </Project>
