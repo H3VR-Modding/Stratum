@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 using BepInEx.Logging;
 using Moq;
 using Stratum.Jobs;
@@ -9,10 +10,6 @@ namespace Stratum.Tests
 {
 	public class PipelineTests
 	{
-		public static Job<Empty> EmptyJob => (_, _) => new Empty();
-		public static Action<Pipeline<Empty>> EmptyNested => _ => { };
-		public static PipelineBuilder<Empty, Pipeline<Empty>> EmptyBuilder => _ => EmptyJob;
-
 		[Fact]
 		[SuppressMessage("ReSharper", "ObjectCreationAsStatement")]
 		private void Ctor_NoArgs()
@@ -24,8 +21,9 @@ namespace Stratum.Tests
 		private void AddJob_ReturnsSelf()
 		{
 			Pipeline<Empty> pipeline = new();
+			Job<Empty> job = Mock.Of<Job<Empty>>();
 
-			Pipeline<Empty> ret = pipeline.AddJob(EmptyJob);
+			Pipeline<Empty> ret = pipeline.AddJob(job);
 
 			Assert.Equal(pipeline, ret);
 		}
@@ -34,7 +32,7 @@ namespace Stratum.Tests
 		private void AddJob_AddsJobToList()
 		{
 			Pipeline<Empty> pipeline = new();
-			Job<Empty> job = EmptyJob;
+			Job<Empty> job = Mock.Of<Job<Empty>>();
 
 			pipeline.AddJob(job);
 
@@ -45,8 +43,10 @@ namespace Stratum.Tests
 		private void AddNested_ReturnsSelf()
 		{
 			Pipeline<Empty> pipeline = new();
+			Action<Pipeline<Empty>> nested = Mock.Of<Action<Pipeline<Empty>>>();
+			PipelineBuilder<Empty, Pipeline<Empty>> builder = Mock.Of<PipelineBuilder<Empty, Pipeline<Empty>>>();
 
-			Pipeline<Empty> ret = pipeline.AddNested(EmptyNested, EmptyBuilder);
+			Pipeline<Empty> ret = pipeline.AddNested(nested, builder);
 
 			Assert.Equal(pipeline, ret);
 		}
@@ -55,52 +55,52 @@ namespace Stratum.Tests
 		private void AddNested_NestedIsParent()
 		{
 			Pipeline<Empty> pipeline = new();
-			Pipeline<Empty>? nested = null;
+			Mock<Action<Pipeline<Empty>>> nested = new();
+			PipelineBuilder<Empty, Pipeline<Empty>> builder = Mock.Of<PipelineBuilder<Empty, Pipeline<Empty>>>();
 
-			pipeline.AddNested(x => nested = x, EmptyBuilder);
+			pipeline.AddNested(nested.Object, builder);
 
-			Assert.NotNull(nested);
-			Assert.Equal(pipeline, nested!.Parent);
+			nested.Verify(x => x(It.Is<Pipeline<Empty>>(y => pipeline == y.Parent)));
 		}
 
 		[Fact]
 		private void AddNested_PipelineIsPassedToBuilder()
 		{
 			Pipeline<Empty> pipeline = new();
-			Pipeline<Empty>? nested = null;
-			Pipeline<Empty>? built = null;
+			Mock<Action<Pipeline<Empty>>> nested = new();
+			Mock<PipelineBuilder<Empty, Pipeline<Empty>>> builder = new();
+			Pipeline<Empty>? passed = null;
 
-			pipeline.AddNested(x => nested = x, x =>
-			{
-				built = x;
+			nested.Setup(x => x(It.IsAny<Pipeline<Empty>>()))
+				.Callback((Pipeline<Empty> x) => passed = x)
+				.Verifiable();
+			builder.Setup(x => x(It.Is<Pipeline<Empty>>(y => y == passed)))
+				.Returns(Mock.Of<Job<Empty>>())
+				.Verifiable();
 
-				return EmptyJob;
-			});
+			pipeline.AddNested(nested.Object, builder.Object);
 
-			Assert.NotNull(nested);
-			Assert.NotNull(built);
-			Assert.Equal(nested, built);
+			nested.Verify();
+			builder.Verify();
 		}
 
 		[Fact]
 		private void AddNested_AddsJobToList()
 		{
 			Pipeline<Empty> pipeline = new();
-			IStage<Empty> stage = Mock.Of<IStage<Empty>>(MockBehavior.Strict);
+			IStage<Empty> stage = Mock.Of<IStage<Empty>>();
 			ManualLogSource logger = new("fake");
-			var ran = false;
+			Mock<Job<Empty>> job = new();
 
-			pipeline.AddNested(x => x.AddJob((_, _) =>
-			{
-				ran = true;
+			job.Setup(x => x(It.IsAny<IStage<Empty>>(), It.IsAny<ManualLogSource>()))
+				.Returns(new Empty())
+				.Verifiable();
 
-				return new Empty();
-			}));
-
+			pipeline.AddNested(x => x.AddJob(job.Object));
 			Job<Empty> single = Assert.Single(pipeline.Jobs)!;
 			single(stage, logger);
 
-			Assert.True(ran);
+			job.Verify();
 		}
 
 		[Fact]

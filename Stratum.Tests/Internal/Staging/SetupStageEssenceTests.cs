@@ -21,7 +21,7 @@ namespace Stratum.Tests.Internal.Staging
 		[Fact]
 		private void Run_Success_CallbackMade()
 		{
-			IStage<Empty> stage = Mock.Of<IStage<Empty>>(MockBehavior.Strict);
+			IStage<Empty> stage = Mock.Of<IStage<Empty>>();
 			Mock<IStratumPlugin> plugin = new();
 			StageContext<Empty> ctx = new(stage, plugin.Object);
 			SetupStageEssence essence = new();
@@ -38,14 +38,19 @@ namespace Stratum.Tests.Internal.Staging
 		[Fact]
 		private void Run_Throw_Throw()
 		{
-			IStage<Empty> stage = Mock.Of<IStage<Empty>>(MockBehavior.Strict);
+			IStage<Empty> stage = Mock.Of<IStage<Empty>>();
 			Mock<IStratumPlugin> plugin = new();
-			plugin.Setup(x => x.OnSetup(It.IsAny<StageContext<Empty>>())).Throws<TestException>();
 			StageContext<Empty> ctx = new(stage, plugin.Object);
 			SetupStageEssence essence = new();
-			Action<StageContext<Empty>> callback = Mock.Of<Action<StageContext<Empty>>>(MockBehavior.Strict);
+			Action<StageContext<Empty>> callback = Mock.Of<Action<StageContext<Empty>>>();
+
+			plugin.Setup(x => x.OnSetup(It.IsAny<StageContext<Empty>>()))
+				.Throws<TestException>()
+				.Verifiable();
 
 			Assert.Throws<Exception>(() => essence.Run(ctx, callback));
+
+			plugin.Verify();
 		}
 	}
 }

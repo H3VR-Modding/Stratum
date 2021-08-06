@@ -32,10 +32,12 @@ namespace Stratum.Tests.Internal.Staging
 
 			IStage<IEnumerator> stage = Mock.Of<IStage<IEnumerator>>(MockBehavior.Strict);
 			Mock<IStratumPlugin> plugin = new();
-			plugin.Setup(onSetup).Returns(set.GetEnumerator);
 			StageContext<IEnumerator> ctx = new(stage, plugin.Object);
 			RuntimeStageEssence essence = new();
 			Mock<Action<StageContext<IEnumerator>>> callback = new();
+
+			plugin.Setup(onSetup)
+				.Returns(set.GetEnumerator);
 
 			IEnumerator ret = essence.Run(ctx, callback.Object);
 
@@ -51,10 +53,12 @@ namespace Stratum.Tests.Internal.Staging
 		{
 			IStage<IEnumerator> stage = Mock.Of<IStage<IEnumerator>>(MockBehavior.Strict);
 			Mock<IStratumPlugin> plugin = new();
-			plugin.Setup(x => x.OnRuntime(It.IsAny<StageContext<IEnumerator>>())).Throws<TestException>();
 			StageContext<IEnumerator> ctx = new(stage, plugin.Object);
 			RuntimeStageEssence essence = new();
 			Action<StageContext<IEnumerator>> callback = Mock.Of<Action<StageContext<IEnumerator>>>(MockBehavior.Strict);
+
+			plugin.Setup(x => x.OnRuntime(It.IsAny<StageContext<IEnumerator>>()))
+				.Throws<TestException>();
 
 			Assert.Throws<Exception>(() => essence.Run(ctx, callback).Enumerate());
 		}

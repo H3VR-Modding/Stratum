@@ -11,8 +11,8 @@ namespace Stratum.Tests.Internal.Staging
 	{
 		internal static StageContext<T> Create<T>()
 		{
-			IStage<T> stage = Mock.Of<IStage<T>>(MockBehavior.Strict);
-			IStratumPlugin plugin = Mock.Of<IStratumPlugin>(MockBehavior.Strict);
+			IStage<T> stage = Mock.Of<IStage<T>>();
+			IStratumPlugin plugin = Mock.Of<IStratumPlugin>();
 
 			return new StageContext<T>(stage, plugin);
 		}
