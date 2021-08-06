@@ -19,7 +19,7 @@ jobs:
         run: dotnet build -c Release Stratum
 
       - name: Test
-        run: dotnet test -c Release --no-build Stratum.Tests /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+        run: dotnet test -c Release Stratum.Tests /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
 
       - name: Push Code Coverage
         uses: codecov/codecov-action@v2.0.2
