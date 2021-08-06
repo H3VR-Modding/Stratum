@@ -3,10 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Logging;
-using Stratum.Extensions;
-using Stratum.Internal.Dependencies;
-using Stratum.Internal.Scheduling;
-using Stratum.Internal.Staging;
+using Stratum.Internal;
 
 namespace Stratum
 {
@@ -55,105 +52,23 @@ namespace Stratum
 		private readonly List<IStratumPlugin> _plugins = new();
 
 		private bool _started;
-		private ChainloaderLogListener? _listener;
 
 		private void Awake()
 		{
 			_instance = this;
 
-			_listener = new ChainloaderLogListener(Load);
-
-			BepInEx.Logging.Logger.Listeners.Add(_listener);
-		}
-
-		private Graph<IStratumPlugin, bool> PluginsToGraph()
-		{
-			Dictionary<string, Graph<IStratumPlugin, bool>.Node> nodes = new(_plugins.Count);
-			Graph<IStratumPlugin, bool> graph = new(_plugins);
-
-			foreach (Graph<IStratumPlugin, bool>.Node node in graph)
-			{
-				IStratumPlugin plugin = node.Metadata;
-				PluginInfo info = plugin.Info;
-
-				foreach (BepInDependency reference in info.Dependencies)
-				{
-					// This is unintuitive, but let me explain. This means either/both:
-					// 1. The dependency is soft, because BepInEx didn't load it and BepInEx would load a hard-dependent.
-					// 2. The plugin isn't a Stratum plugin, because it never injected.
-					// In either situation, we don't care.
-					if (!nodes.TryGetValue(reference.DependencyGUID, out Graph<IStratumPlugin, bool>.Node? resolved))
-						continue;
-
-					bool isHard = reference.Flags.HasFlagFast(BepInDependency.DependencyFlags.HardDependency);
-					node.Attach(resolved, isHard);
-				}
-
-				nodes.Add(info.Metadata.GUID, node);
-			}
-
-			return graph;
-		}
-
-		private IEnumerator UnsubscribeLog()
-		{
-			yield return null;
-
-			BepInEx.Logging.Logger.Listeners.Remove(_listener);
+			ChainloaderCompleteHook.Create(Load, StartCoroutine);
 		}
 
 		private void Load()
 		{
 			_started = true;
-			StartCoroutine(UnsubscribeLog());
 
 			// ggez
 			if (_plugins.Count == 0)
 				return;
 
-			Graph<IStratumPlugin, bool> graph = PluginsToGraph();
-			DependencyEnumerable<IStratumPlugin> deps = new(graph);
-
-			{
-				ImmediateScheduler scheduler = new(Logger, deps);
-				using SetupStage stage = new(_plugins.Count, Logger);
-
-				try
-				{
-					scheduler.Run(stage);
-				}
-				catch (Exception e)
-				{
-					Logger.LogFatal("An unhandled exception was thrown by the immediate stage scheduler. A stage may have been " +
-					                "interrupted, and no further stages will be loaded:\n" + e);
-					return;
-				}
-			}
-
-			{
-				DelayedScheduler scheduler = new(Logger, deps, StartCoroutine);
-				// Don't dispose this, it will die before the coroutine starts.
-				// Also, stuff in runtime can be used throughout runtime.
-				RuntimeStage stage = new(_plugins.Count, Logger);
-
-				IEnumerator exec;
-				try
-				{
-					exec = scheduler
-						.Run(stage)
-						.TryCatch(e => Logger.LogFatal("An unhandled exception was thrown by the delayed stage scheduler " +
-						                               "(mid-yield). A stage may have been interrupted, and no further stages will be " +
-						                               "loaded:\n" + e));
-				}
-				catch (Exception e)
-				{
-					Logger.LogFatal("An unhandled exception was thrown by the delayed stage scheduler (pre-yield). No further stages " +
-					                "will be loaded:\n" + e);
-					return;
-				}
-
-				StartCoroutine(exec.ContinueWith(() => Logger.LogMessage("Loading complete")));
-			}
+			Bootstrap.Run(Logger, _plugins, StartCoroutine);
 		}
 
 		private void InjectInstance(IStratumPlugin plugin)
@@ -171,24 +86,6 @@ namespace Stratum
 			}
 
 			_plugins.Add(plugin);
-		}
-
-		private class ChainloaderLogListener : ILogListener
-		{
-			private readonly Action _callback;
-
-			public ChainloaderLogListener(Action callback)
-			{
-				_callback = callback;
-			}
-
-			public void LogEvent(object sender, LogEventArgs eventArgs)
-			{
-				if (eventArgs is {Source: {SourceName: "BepInEx"}, Data: "Chainloader startup complete"})
-					_callback();
-			}
-
-			public void Dispose() { }
 		}
 	}
 }

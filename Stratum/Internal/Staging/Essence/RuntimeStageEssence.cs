@@ -1,17 +1,14 @@
 using System;
 using System.Collections;
-using BepInEx.Logging;
 using Stratum.Extensions;
 
 namespace Stratum.Internal.Staging
 {
-	internal sealed class RuntimeStage : Stage<IEnumerator>
+	internal sealed class RuntimeStageEssence : IStageEssence<IEnumerator>
 	{
-		public RuntimeStage(int count, ManualLogSource logger) : base(count, logger) { }
+		public Stages Variant => Stages.Runtime;
 
-		public override Stages Variant => Stages.Runtime;
-
-		protected override IEnumerator BeginRun(StageContext<IEnumerator> ctx)
+		public IEnumerator Run(StageContext<IEnumerator> ctx, Action<StageContext<IEnumerator>> callback)
 		{
 			IStratumPlugin plugin = ctx.Plugin;
 
@@ -30,7 +27,7 @@ namespace Stratum.Internal.Staging
 				yield return item;
 
 			// Do try-finally this. Context should only be added through a successful load.
-			EndRun(ctx);
+			callback(ctx);
 		}
 	}
 }

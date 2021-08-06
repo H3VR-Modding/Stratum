@@ -6,36 +6,41 @@ using BepInEx.Logging;
 
 namespace Stratum.Internal.Staging
 {
-	internal abstract class Stage<TRet> : IStage<TRet>, IDisposable
+	internal class Stage<TRet> : IStage<TRet>, IDisposable
 	{
+		private readonly IStageEssence<TRet> _essence;
+
+		private bool _disposed;
+		private ManualLogSource? _logger;
 		private Dictionary<string, StageContext<TRet>>? _contexts;
 
-		protected Stage(int count, ManualLogSource logger)
+		public Stage(IStageEssence<TRet> essence, int count, ManualLogSource logger)
 		{
+			_essence = essence;
+			_logger = logger;
 			_contexts = new Dictionary<string, StageContext<TRet>>(count);
-
-			Logger = logger;
 		}
 
-		private Dictionary<string, StageContext<TRet>> Contexts =>
-			_contexts ?? throw new ObjectDisposedException(GetType().FullName);
+		private ManualLogSource Logger => _logger ?? throw new ObjectDisposedException(GetType().FullName);
 
-		protected ManualLogSource Logger { get; }
+		private Dictionary<string, StageContext<TRet>> Contexts => _contexts ?? throw new ObjectDisposedException(GetType().FullName);
 
-		public abstract Stages Variant { get; }
+		public Stages Variant => _essence.Variant;
 
 		public IReadOnlyStageContext<TRet> this[string guid] => TryGet(guid) ?? throw new InvalidOperationException("The plugin" +
 			$"with the GUID '{guid}' was not found.");
 
 		public void Dispose()
 		{
-			if (_contexts == null)
+			if (_disposed)
 				return;
 
-			foreach (StageContext<TRet> ctx in _contexts.Values)
+			foreach (StageContext<TRet> ctx in _contexts!.Values)
 				ctx.Dispose();
 
+			_logger = null;
 			_contexts = null;
+			_disposed = true;
 		}
 
 		public IReadOnlyStageContext<TRet>? TryGet(string guid)
@@ -55,7 +60,7 @@ namespace Stratum.Internal.Staging
 			return GetEnumerator();
 		}
 
-		protected void EndRun(StageContext<TRet> ctx)
+		private void RunCallback(StageContext<TRet> ctx)
 		{
 			ctx.Freeze();
 
@@ -65,13 +70,11 @@ namespace Stratum.Internal.Staging
 			Contexts.Add(guid, ctx);
 		}
 
-		protected abstract TRet BeginRun(StageContext<TRet> ctx);
-
 		public TRet Run(IStratumPlugin plugin)
 		{
 			Logger.LogDebug($"Loading {plugin.Info} -> {Variant}");
 
-			return BeginRun(new StageContext<TRet>(this, plugin));
+			return _essence.Run(new StageContext<TRet>(this, plugin), RunCallback);
 		}
 
 		public override string ToString()
