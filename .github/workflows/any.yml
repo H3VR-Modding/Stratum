@@ -1,13 +1,9 @@
 on:
   push:
-    branches:
-      - main
   pull_request:
-    branches:
-      - main
 
 jobs:
-  pack:
+  main:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,6 +17,14 @@ jobs:
 
       - name: Build
         run: dotnet build -c Release Stratum
+
+      - name: Test
+        run: dotnet test -c Release --no-build Stratum.Tests /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+
+      - name: Push Code Coverage
+        uses: codecov/codecov-action@v2.0.2
+        with:
+          files: Stratum.Tests/coverage.opencover.xml
 
       - name: Pack NuGet
         run: dotnet pack -c Release --no-build Stratum
