@@ -24,7 +24,8 @@ jobs:
       - name: Push Code Coverage
         uses: codecov/codecov-action@v2.0.2
         with:
-          files: Stratum.Tests/coverage.opencover.xml
+          directory: Stratum.Tests
+          files: coverage.opencover.xml
 
       - name: Pack NuGet
         run: dotnet pack -c Release --no-build Stratum
@@ -37,6 +38,7 @@ jobs:
         with:
           name: Stratum
           path: |
+            Stratum.Tests/coverage.opencover.xml
             Stratum/nupkg/Thunderstore.zip
             Stratum/nupkg/*.nupkg
             Stratum/nupkg/*.snupkg
