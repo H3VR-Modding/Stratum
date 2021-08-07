@@ -112,6 +112,11 @@ namespace Stratum.Jobs
 	{
 		private Pipeline(Pipeline<TRet> parent) : base(parent) { }
 
+		/// <summary>
+		///		Creates an instance of <see cref="Pipeline{TRet,TSelf}"/>
+		/// </summary>
+		public Pipeline() { }
+
 		/// <inheritdoc cref="Pipeline{TRet,TSelf}.CreateNested" />
 		protected override Pipeline<TRet> CreateNested()
 		{

@@ -1,15 +1,12 @@
 using System;
-using BepInEx.Logging;
 
 namespace Stratum.Internal.Staging
 {
-	internal sealed class SetupStage : Stage<Empty>
+	internal sealed class SetupStageEssence : IStageEssence<Empty>
 	{
-		public SetupStage(int count, ManualLogSource logger) : base(count, logger) { }
+		public Stages Variant => Stages.Setup;
 
-		public override Stages Variant => Stages.Setup;
-
-		protected override Empty BeginRun(StageContext<Empty> ctx)
+		public Empty Run(StageContext<Empty> ctx, Action<StageContext<Empty>> callback)
 		{
 			IStratumPlugin plugin = ctx.Plugin;
 
@@ -23,7 +20,7 @@ namespace Stratum.Internal.Staging
 			}
 
 			// Do try-finally this. Context should only be added through a successful load.
-			EndRun(ctx);
+			callback(ctx);
 
 			return new Empty();
 		}

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Stratum.Internal.Dependencies
 {
-	internal class DependencyEnumerable<TNode> : IEnumerable<IEnumerable<Graph<TNode, bool>.Node>>
+	internal class DependencyEnumerable<TNode> : IEnumerable<Graph<TNode, bool>.Node[]>
 	{
 		private readonly bool[] _dead;
 		private readonly Graph<TNode, bool> _graph;
@@ -18,18 +18,10 @@ namespace Stratum.Internal.Dependencies
 			_dead = new bool[_graph.Count];
 		}
 
-		public DependencyEnumerable(Graph<TNode, bool> graph, bool[] dead) : this(graph)
-		{
-			if (graph.Count != dead.Length)
-				throw new ArgumentException("The dead array must be as long as the count of the graph.");
-
-			_dead = dead;
-		}
-
 		public int Count => _graph.Count;
 
 		// Kahn's algorithm, adjusted to yield batches and allow for killing.
-		public IEnumerator<IEnumerable<Graph<TNode, bool>.Node>> GetEnumerator()
+		public IEnumerator<Graph<TNode, bool>.Node[]> GetEnumerator()
 		{
 			Graph<TNode, bool> graph = _graph.Copy();
 			List<Graph<TNode, bool>.Node> set = new(graph.Count);
@@ -41,7 +33,7 @@ namespace Stratum.Internal.Dependencies
 
 			while (set.Count > 0)
 			{
-				yield return set;
+				yield return set.ToArray();
 
 				int count = set.Count;
 				for (var c = 0; c < count; ++c)
@@ -71,11 +63,6 @@ namespace Stratum.Internal.Dependencies
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return GetEnumerator();
-		}
-
-		public DependencyEnumerable<TNode> Copy()
-		{
-			return new(_graph);
 		}
 
 		private void Kill(Graph<TNode, bool>.Node node, HashSet<Graph<TNode, bool>.Node> killed)

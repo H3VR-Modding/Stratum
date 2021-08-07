@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Version>1.0.1</Version>
 
-    <TargetFramework>net35</TargetFramework>
+    <TargetFrameworks>net35;netstandard20</TargetFrameworks>
     <LangVersion>9</LangVersion>
     <Nullable>enable</Nullable>
 
