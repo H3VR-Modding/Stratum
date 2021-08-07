@@ -17,6 +17,9 @@ jobs:
         with:
           dotnet-version: 5.0.x
 
+      - name: Restore Tools
+        run: dotnet tool restore
+
       - name: Build
         run: dotnet build -c Release Stratum
 
