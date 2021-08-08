@@ -1,6 +1,6 @@
 on:
   push:
-    paths-ignore: &ignore
+    paths-ignore:
       - '.vscode/**/*'
       - '.editorconfig'
       - '.gitattributes'
@@ -9,7 +9,14 @@ on:
       - 'README.md'
       - 'Stratum.sln.DotSettings'
   pull_request:
-    paths-ignore: *ignore
+    paths-ignore:
+      - '.vscode/**/*'
+      - '.editorconfig'
+      - '.gitattributes'
+      - '.gitignore'
+      - 'LICENSE'
+      - 'README.md'
+      - 'Stratum.sln.DotSettings'
 
 jobs:
   main:
