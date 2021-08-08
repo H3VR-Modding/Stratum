@@ -1,7 +1,7 @@
 on:
   push:
     paths-ignore: &ignore
-      - '.vscode'
+      - '.vscode/**/*'
       - '.editorconfig'
       - '.gitattributes'
       - '.gitignore'
