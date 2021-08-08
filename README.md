@@ -1,4 +1,4 @@
-# Stratum <img src="media/icon/128.png" height="96" align="left" />
+# Stratum <img src="media/icon/128.png" height="92" align="left" />
 
 [![codecov](https://codecov.io/gh/H3VR-Modding/Stratum/branch/main/graph/badge.svg?token=ZEAV3UHK8S)](https://codecov.io/gh/H3VR-Modding/Stratum)
 
