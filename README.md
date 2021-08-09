@@ -1,4 +1,4 @@
-# Stratum <img src="media/icon/128.png" height="92" align="left" />
+# Stratum <img src="https://raw.githubusercontent.com/H3VR-Modding/Stratum/main/media/icon/128.png" height="92" align="left" />
 
 [![releases](https://img.shields.io/github/v/release/H3VR-Modding/Stratum)](https://github.com/H3VR-Modding/Stratum/releases) [![nuget](https://img.shields.io/nuget/v/Stratum)](https://www.nuget.org/packages/Stratum) [![codecov](https://codecov.io/gh/H3VR-Modding/Stratum/branch/main/graph/badge.svg?token=ZEAV3UHK8S)](https://codecov.io/gh/H3VR-Modding/Stratum) [![chat](https://img.shields.io/discord/777351065950879744?label=chat&logo=discord&logoColor=white)](https://discord.com/invite/g8xeFyt42j)
 
