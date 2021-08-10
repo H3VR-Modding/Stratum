@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using BepInEx.Logging;
 
 namespace Stratum.Internal.Staging
 {
@@ -11,17 +10,13 @@ namespace Stratum.Internal.Staging
 		private readonly IStageEssence<TRet> _essence;
 
 		private bool _disposed;
-		private ManualLogSource? _logger;
 		private Dictionary<string, StageContext<TRet>>? _contexts;
 
-		public Stage(IStageEssence<TRet> essence, int count, ManualLogSource logger)
+		public Stage(IStageEssence<TRet> essence, int count)
 		{
 			_essence = essence;
-			_logger = logger;
 			_contexts = new Dictionary<string, StageContext<TRet>>(count);
 		}
-
-		private ManualLogSource Logger => _logger ?? throw new ObjectDisposedException(GetType().FullName);
 
 		private Dictionary<string, StageContext<TRet>> Contexts => _contexts ?? throw new ObjectDisposedException(GetType().FullName);
 
@@ -38,7 +33,6 @@ namespace Stratum.Internal.Staging
 			foreach (StageContext<TRet> ctx in _contexts!.Values)
 				ctx.Dispose();
 
-			_logger = null;
 			_contexts = null;
 			_disposed = true;
 		}
@@ -60,21 +54,24 @@ namespace Stratum.Internal.Staging
 			return GetEnumerator();
 		}
 
-		private void RunCallback(StageContext<TRet> ctx)
+		private Action RunCallback(StageContext<TRet> ctx)
 		{
-			ctx.Freeze();
+			return () =>
+			{
+				ctx.Freeze();
 
-			IReadOnlyStageContext<TRet> rctx = ctx;
-			string guid = rctx.Plugin.Info.Metadata.GUID;
+				IReadOnlyStageContext<TRet> rctx = ctx;
+				string guid = rctx.Plugin.Info.Metadata.GUID;
 
-			Contexts.Add(guid, ctx);
+				Contexts.Add(guid, ctx);
+			};
 		}
 
 		public TRet Run(IStratumPlugin plugin)
 		{
-			Logger.LogDebug($"Loading {plugin.Info} -> {Variant}");
+			StageContext<TRet> ctx = new(this, plugin);
 
-			return _essence.Run(new StageContext<TRet>(this, plugin), RunCallback);
+			return _essence.Run(ctx, RunCallback(ctx));
 		}
 
 		public override string ToString()

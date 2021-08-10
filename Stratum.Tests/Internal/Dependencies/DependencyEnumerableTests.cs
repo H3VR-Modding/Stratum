@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Stratum.Extensions;
 using Stratum.Internal.Dependencies;
 using Xunit;
 

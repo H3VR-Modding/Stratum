@@ -165,8 +165,12 @@ namespace Stratum.Jobs
 				var exceptions = new Exception?[jobs.Count];
 
 				for (var i = 0; i < jobs.Count; ++i)
+				{
+					int j = i;
+
 					// Swallow exception from other callstack (we throw it later)
-					coroutines[i] = startCoroutine(jobs[i](stage, logger).TryCatch(e => exceptions[i] = e));
+					coroutines[i] = startCoroutine(jobs[i](stage, logger).TryCatch(e => exceptions[j] = e));
+				}
 
 				for (var i = 0; i < jobs.Count; ++i)
 				{
