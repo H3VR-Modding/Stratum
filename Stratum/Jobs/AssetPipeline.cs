@@ -44,21 +44,14 @@ namespace Stratum.Jobs
 		{
 			TRet Job(IStage<TRet> stage, ManualLogSource logger)
 			{
-				string fmt = ToString();
-				string pad = new(' ', fmt.Length);
-
-				logger.LogDebug($"{fmt} | Resolving plugin '{plugin}'");
 				IReadOnlyStageContext<TRet> ctx = stage[plugin];
 
-				logger.LogDebug($"{pad} | Resolving loader '{name}'");
 				if (!ctx.Loaders.TryGetValue(name, out Loader<TRet> loader))
 					throw new KeyNotFoundException($"The plugin '{plugin}' did not have the loader named '{name}'");
 
-				logger.LogDebug($"{pad} | Resolving resource '{path}'");
 				FileSystemInfo handle = Root.GetChild(path) ?? throw
 					new FileNotFoundException($"No file/directory existed at path {path} (root: {Root})");
 
-				logger.LogDebug($"{pad} | Running");
 				return loader(handle);
 			}
 
@@ -79,7 +72,7 @@ namespace Stratum.Jobs
 		/// <inheritdoc cref="Pipeline{TRet,TSelf}.CreateNested" />
 		protected override AssetPipeline<TRet> CreateNested()
 		{
-			return new(this, Root);
+			return new AssetPipeline<TRet>(this, Root);
 		}
 	}
 }

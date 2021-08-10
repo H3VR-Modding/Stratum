@@ -10,5 +10,6 @@ namespace Stratum.Jobs
 	/// <summary>
 	///     A method that constructs a job from a pipeline
 	/// </summary>
-	public delegate Job<TRet> PipelineBuilder<TRet, in TPipeline>(TPipeline pipeline) where TPipeline : Pipeline<TRet, TPipeline>;
+	public delegate Job<TRet> PipelineBuilder<TRet, in TPipeline>(TPipeline pipeline)
+		where TPipeline : Pipeline<TRet, TPipeline>;
 }

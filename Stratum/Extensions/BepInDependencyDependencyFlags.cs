@@ -8,7 +8,7 @@ namespace Stratum.Extensions
 	/// </summary>
 	public static class ExtBepInDependencyDependencyFlags
 	{
-		/// <inheritdoc cref="HasFlagFast"/>
+		/// <inheritdoc cref="HasFlagFast" />
 		[Obsolete("Use HasFlagFast")]
 		public static bool HasFlag(this BepInDependency.DependencyFlags @this, BepInDependency.DependencyFlags flag)
 		{

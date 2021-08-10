@@ -8,7 +8,8 @@ namespace Stratum.Extensions
 	public static class ExtDirectoryInfo
 	{
 		/// <summary>
-		///     Attempts to find a child handle of this directory with the specified name, otherwise returns <see langword="null" />
+		///     Attempts to find a child handle of this directory with the specified name, otherwise returns
+		///     <see langword="null" />
 		/// </summary>
 		/// <param name="this"></param>
 		/// <param name="name">The name of the handle</param>

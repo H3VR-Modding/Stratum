@@ -19,7 +19,8 @@ namespace Stratum.Extensions
 		}
 
 		/// <summary>
-		///     Returns a <see cref="DirectoryInfo" /> if this handle is a directory, otherwise throws an <see cref="ArgumentException" />
+		///     Returns a <see cref="DirectoryInfo" /> if this handle is a directory, otherwise throws an
+		///     <see cref="ArgumentException" />
 		/// </summary>
 		/// <param name="this"></param>
 		/// <exception cref="ArgumentException">Handle was not a file</exception>

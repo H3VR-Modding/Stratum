@@ -6,6 +6,6 @@ namespace Stratum.Internal.Staging
 	{
 		Stages Variant { get; }
 
-		TRet Run(StageContext<TRet> ctx, Action<StageContext<TRet>> callback);
+		TRet Run(StageContext<TRet> ctx, Action callback);
 	}
 }

@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using BepInEx;
 using Stratum;
-using Stratum.Extensions;
 using Stratum.Jobs;
 
 namespace Example.Assets

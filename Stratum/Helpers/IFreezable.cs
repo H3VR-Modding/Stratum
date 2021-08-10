@@ -6,7 +6,8 @@ namespace Stratum
 	public interface IFreezable
 	{
 		/// <summary>
-		///     Freezes the object, turning it read-only. Any writing operations should throw an <see cref="ObjectFrozenException" />.
+		///     Freezes the object, turning it read-only. Any writing operations should throw an
+		///     <see cref="ObjectFrozenException" />.
 		/// </summary>
 		void Freeze();
 	}

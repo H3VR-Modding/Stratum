@@ -1,15 +1,15 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using BepInEx;
-using BepInEx.Logging;
 using Stratum.Extensions;
 using Stratum.Internal.Dependencies;
 using Stratum.Internal.Staging;
+using Stratum.Internal.Staging.Events;
 
 namespace Stratum.Internal
 {
-	internal static class Bootstrap
+	internal readonly struct Bootstrap
 	{
 		private static Graph<IStratumPlugin, bool> PluginsToGraph(List<IStratumPlugin> plugins)
 		{
@@ -40,62 +40,70 @@ namespace Stratum.Internal
 			return graph;
 		}
 
-		private static bool RunSetup(ManualLogSource logger, Scheduler scheduler)
-        {
-        	Scheduler.Runner<Empty> runner = Scheduler.ImmediateRunner;
+		private readonly Scheduler _scheduler;
+		private readonly EventInvocators _events;
 
-        	using Stage<Empty> stage = new(new SetupStageEssence(), scheduler.Count, logger);
+		public Bootstrap(List<IStratumPlugin> plugins, EventInvocators events)
+		{
+			Graph<IStratumPlugin, bool> graph = PluginsToGraph(plugins);
+			DependencyEnumerable<IStratumPlugin> deps = new(graph);
+			_scheduler = new Scheduler(deps);
 
-        	try
-        	{
-        		scheduler.Run(stage, runner);
-        	}
-        	catch (Exception e)
-        	{
-	            logger.LogFatal("An unhandled exception was thrown by the immediate stage scheduler. A stage may have been " +
-	                            "interrupted, and no further stages will be loaded:\n" + e);
+			_events = events;
+		}
 
-        		return false;
-        	}
+		private void RunSetup()
+		{
+			Scheduler.Runner<Empty> runner = Scheduler.ImmediateRunner;
+			using Stage<Empty> stage = new(new SetupStageEssence(), _scheduler.Count);
 
-        	return true;
-        }
+			_scheduler.Run(stage, runner, _events.Setup);
+		}
 
-        private static void RunRuntime(ManualLogSource logger, Scheduler scheduler, CoroutineStarter startCoroutine)
-        {
-        	Scheduler.Runner<IEnumerator> runner = Scheduler.DelayedRunner(startCoroutine);
+		private void RunRuntime(CoroutineStarter startCoroutine, Stopwatch clock)
+		{
+			Scheduler.Runner<IEnumerator> runner = Scheduler.DelayedRunner(startCoroutine);
 
-        	// Don't dispose this, it will die before the coroutine starts.
-        	// Also, stuff in runtime can be used throughout runtime.
-        	Stage<IEnumerator> stage = new(new RuntimeStageEssence(), scheduler.Count, logger);
+			// Don't dispose this, it will die before the coroutine starts.
+			// Also, stuff in runtime can be used throughout runtime.
+			Stage<IEnumerator> stage = new(new RuntimeStageEssence(), _scheduler.Count);
 
-        	IEnumerator exec;
-        	try
-        	{
-        		exec = scheduler
-        			.Run(stage, runner)
-        			.TryCatch(e => logger.LogFatal("An unhandled exception was thrown by the delayed stage scheduler " +
-                                                   "(mid-yield). A stage may have been interrupted, and no further stages will be " +
-                                                   "loaded:\n" + e));
-        	}
-        	catch (Exception e)
-        	{
-        		logger.LogFatal("An unhandled exception was thrown by the delayed stage scheduler (pre-yield). No further stages " +
-        		                "will be loaded:\n" + e);
-        		return;
-        	}
+			// Copy because closures cannot access fields, only locals
+			EventInvocators events = _events;
+			try
+			{
+				// ReSharper disable once AccessToDisposedClosure	It's only disposed if the code throws, in which case the lambda wont run
+				IEnumerator exec = _scheduler
+					.Run(stage, runner, events.Runtime)
+					.TryFinally(() => stage.Dispose())
+					.ContinueWith(() =>
+					{
+						clock.Stop();
 
-            startCoroutine(exec.ContinueWith(() => logger.LogMessage("Loading complete")));
-        }
+						if (events.Complete is { } invoke)
+						{
+							LoadedStratumEventArgs loadedStratum = new(clock.Elapsed);
 
-        public static void Run(ManualLogSource logger, List<IStratumPlugin> plugins, CoroutineStarter startCoroutine)
-        {
-	        Graph<IStratumPlugin, bool> graph = PluginsToGraph(plugins);
-	        DependencyEnumerable<IStratumPlugin> deps = new(graph);
-	        Scheduler scheduler = new(logger, deps);
+							invoke(loadedStratum);
+						}
+					});
 
-	        if (RunSetup(logger, scheduler))
-		        RunRuntime(logger, scheduler, startCoroutine);
-        }
+				startCoroutine(exec);
+			}
+			catch // Don't use finally. This should only be ran when the enumerator fails to execute.
+			{
+				stage.Dispose();
+
+				throw;
+			}
+		}
+
+		public void Run(CoroutineStarter startCoroutine)
+		{
+			Stopwatch clock = Stopwatch.StartNew();
+
+			RunSetup();
+			RunRuntime(startCoroutine, clock);
+		}
 	}
 }

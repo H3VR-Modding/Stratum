@@ -1,11 +1,8 @@
 using System;
 using System.Collections;
-using System.Linq;
 using BepInEx.Logging;
 using Moq;
-using Stratum.Extensions;
 using Stratum.Jobs;
-using UnityEngine;
 using Xunit;
 
 namespace Stratum.Tests
