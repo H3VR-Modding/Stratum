@@ -39,8 +39,14 @@ namespace Stratum
 
 		private static StratumRoot? _instance;
 
+		/// <summary>
+		///		All the <see cref="IStageEvents"/> that can be subscribed to
+		/// </summary>
 		public static AllStageEvents StageEvents { get; } = new(SetupEvents, RuntimeEvents);
 
+		/// <summary>
+		///		Invoked when Stratum finishes loading all stages
+		/// </summary>
 		public static event EventHandler<LoadedStratumEventArgs>? LoadingComplete;
 
 		/// <summary>
@@ -211,7 +217,7 @@ namespace Stratum
 				foreach (ILoadedBatch batch in args.Batches)
 				{
 					builder
-						.Append(batch.Index + 1)
+						.Append(batch.Generation + 1)
 						.Append(": ")
 						.Append(batch.Plugins.Count)
 						.Append(" plugins in ")

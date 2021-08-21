@@ -10,11 +10,11 @@ namespace Stratum.Internal.Staging.Events
 		}
 
 		public event EventHandler<StageLoadingEventArgs>? StageLoading;
-		public event EventHandler<StageLoadedEventArgs>? StageLoaded;
 		public event EventHandler<BatchLoadingEventArgs>? BatchLoading;
-		public event EventHandler<BatchLoadedEventArgs>? BatchLoaded;
 		public event EventHandler<PluginLoadedEventArgs>? PluginLoaded;
 		public event EventHandler<PluginFailedEventArgs>? PluginFailed;
+		public event EventHandler<BatchLoadedEventArgs>? BatchLoaded;
+		public event EventHandler<StageLoadedEventArgs>? StageLoaded;
 
 		public Invocators Invoke { get; }
 
@@ -28,11 +28,11 @@ namespace Stratum.Internal.Staging.Events
 			private readonly DefaultStageEvents _events;
 
 			public Action<StageLoadingEventArgs>? StageLoading => Invocator(events => events.StageLoading);
-			public Action<StageLoadedEventArgs>? StageLoaded => Invocator(events => events.StageLoaded);
 			public Action<BatchLoadingEventArgs>? BatchLoading => Invocator(events => events.BatchLoading);
-			public Action<BatchLoadedEventArgs>? BatchLoaded => Invocator(events => events.BatchLoaded);
 			public Action<PluginLoadedEventArgs>? PluginLoaded => Invocator(events => events.PluginLoaded);
 			public Action<PluginFailedEventArgs>? PluginFailed => Invocator(events => events.PluginFailed);
+			public Action<BatchLoadedEventArgs>? BatchLoaded => Invocator(events => events.BatchLoaded);
+			public Action<StageLoadedEventArgs>? StageLoaded => Invocator(events => events.StageLoaded);
 
 			private Action<T>? Invocator<T>(Func<DefaultStageEvents, EventHandler<T>?> @event) where T : EventArgs
 			{

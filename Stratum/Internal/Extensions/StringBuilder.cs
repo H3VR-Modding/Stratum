@@ -1,4 +1,3 @@
-using System;
 using System.Text;
 
 namespace Stratum.Internal.Extensions
@@ -10,7 +9,7 @@ namespace Stratum.Internal.Extensions
 			return @this
 				.Append(batch.Stage.ToFriendlyString())
 				.Append(" batch #")
-				.Append(batch.Index + 1)
+				.Append(batch.Generation + 1)
 				.Append(" with ")
 				.Append(batch.Plugins.Count)
 				.Append(" plugins");

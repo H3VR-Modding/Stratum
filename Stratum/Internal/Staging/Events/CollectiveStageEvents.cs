@@ -1,5 +1,4 @@
 using System;
-using Stratum.Extensions;
 
 namespace Stratum.Internal.Staging.Events
 {
@@ -18,22 +17,10 @@ namespace Stratum.Internal.Staging.Events
 			remove => Foreach(value, (state, item) => item.StageLoading -= state);
 		}
 
-		public event EventHandler<StageLoadedEventArgs>? StageLoaded
-		{
-			add => Foreach(value, (state, item) => item.StageLoaded += state);
-			remove => Foreach(value, (state, item) => item.StageLoaded -= state);
-		}
-
 		public event EventHandler<BatchLoadingEventArgs>? BatchLoading
 		{
 			add => Foreach(value, (state, item) => item.BatchLoading += state);
 			remove => Foreach(value, (state, item) => item.BatchLoading -= state);
-		}
-
-		public event EventHandler<BatchLoadedEventArgs>? BatchLoaded
-		{
-			add => Foreach(value, (state, item) => item.BatchLoaded += state);
-			remove => Foreach(value, (state, item) => item.BatchLoaded -= state);
 		}
 
 		public event EventHandler<PluginLoadedEventArgs>? PluginLoaded
@@ -48,9 +35,22 @@ namespace Stratum.Internal.Staging.Events
 			remove => Foreach(value, (state, item) => item.PluginFailed -= state);
 		}
 
-		private void Foreach<T>(T value, ExtIEnumerable.ForeachAction<IStageEvents, T> action)
+		public event EventHandler<BatchLoadedEventArgs>? BatchLoaded
 		{
-			_events.Foreach(value, action);
+			add => Foreach(value, (state, item) => item.BatchLoaded += state);
+			remove => Foreach(value, (state, item) => item.BatchLoaded -= state);
+		}
+
+		public event EventHandler<StageLoadedEventArgs>? StageLoaded
+		{
+			add => Foreach(value, (state, item) => item.StageLoaded += state);
+			remove => Foreach(value, (state, item) => item.StageLoaded -= state);
+		}
+
+		private void Foreach<T>(T value, Action<T, IStageEvents> action)
+		{
+			foreach (IStageEvents item in _events)
+				action(value, item);
 		}
 	}
 }

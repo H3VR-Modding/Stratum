@@ -3,17 +3,25 @@ using System.Collections.Generic;
 
 namespace Stratum
 {
-	public sealed class BatchLoadingEventArgs : EventArgs, ILoadingBatch
+	/// <summary>
+	///		Event data for when a batch of plugins begins to load
+	/// </summary>
+	public sealed class BatchLoadingEventArgs : EventArgs, IEventBatch<IReadOnlyStratumPlugin>
 	{
 		internal BatchLoadingEventArgs(Stages stage, int index, IReadOnlyList<IReadOnlyStratumPlugin> plugins)
 		{
 			Stage = stage;
-			Index = index;
+			Generation = index;
 			Plugins = plugins;
 		}
 
+		/// <inheritdoc cref="IHasStage.Stage"/>
 		public Stages Stage { get; }
-		public int Index { get; }
+
+		/// <inheritdoc cref="IEventBatch{TPlugin}.Generation"/>
+		public int Generation { get; }
+
+		/// <inheritdoc cref="IEventBatch{TPlugin}.Plugins"/>
 		public IReadOnlyList<IReadOnlyStratumPlugin> Plugins { get; }
 	}
 }
