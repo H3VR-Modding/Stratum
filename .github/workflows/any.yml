@@ -1,7 +1,7 @@
 on:
   push:
     paths-ignore:
-      - '.vscode/**/*'
+      - '.vscode/**'
       - '.editorconfig'
       - '.gitattributes'
       - '.gitignore'
@@ -10,7 +10,7 @@ on:
       - 'Stratum.sln.DotSettings'
   pull_request:
     paths-ignore:
-      - '.vscode/**/*'
+      - '.vscode/**'
       - '.editorconfig'
       - '.gitattributes'
       - '.gitignore'
@@ -47,14 +47,11 @@ jobs:
         with:
           files: Stratum.Tests/coverage.opencover.xml
 
-      - name: Pack Thunderstore
-        run: thunderstore/pack.sh
-
       - name: Upload Thunderstore
         uses: actions/upload-artifact@v2
         with:
           name: Thunderstore
-          path: thunderstore/out/*
+          path: '*/thunderstore/out/*'
 
       - name: Pack NuGet
         run: dotnet pack -c Release Stratum

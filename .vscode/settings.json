@@ -3,7 +3,7 @@
     {
       "url": "https://raw.githubusercontent.com/ash-hat/thunderstore.manifest/main/v1/r2modman/schema.json",
       "fileMatch": [
-        "thunderstore/manifest.json"
+        "Stratum/manifest.json"
       ]
     }
   ]

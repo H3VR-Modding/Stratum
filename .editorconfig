@@ -13,5 +13,5 @@ indent_size=2
 [*.md]
 trim_trailing_whitespace=false
 
-[*.cs]
+[{*.cs,*.tt}]
 indent_style=tab

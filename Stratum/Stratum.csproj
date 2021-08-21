@@ -22,7 +22,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\media\icon\128.png" Pack="true" PackagePath="icon.png"/>
+    <None Include="..\media\icon\128.png" Pack="true" PackagePath="icon.png" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
@@ -34,13 +34,97 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BepInEx.Core" Version="5.4.11"/>
-    <PackageReference Include="ReadOnlyCollectionInterfaces" Version="1.0.0"/>
-    <PackageReference Include="UnityEngine.Core" Version="5.6.1"/>
+    <PackageReference Include="BepInEx.Core" Version="5.4.11" />
+    <PackageReference Include="UnityEngine.Core" Version="5.6.1" />
+    <PackageReference Include="ReadOnlyCollectionInterfaces" Version="1.0.0" />
 
-    <PackageReference Include="MinVer" Version="2.5.0" PrivateAssets="all"/>
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all"/>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
+    <PackageReference Include="BepInEx.Analyzers" Version="1.0.4" PrivateAssets="all" />
+    <PackageReference Include="MinVer" Version="2.5.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
+
+
+  <ItemGroup>
+    <None Remove="thunderstore/**" />
+  </ItemGroup>
+
+  <!-- Thank you MSBuild for not having a builtin task to get the nth item of an array -->
+  <UsingTask TaskName="GetNthItem" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <Items ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+      <Index ParameterType="System.Int32" Required="true" />
+      <Item ParameterType="Microsoft.Build.Framework.ITaskItem" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Code Type="Fragment" Language="cs">Item = Items[Index];</Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="ResolveJq">
+    <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+      <_Jq>../.jq/jq-win64.exe</_Jq>
+    </PropertyGroup>
+    <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+      <_Jq>../.jq/jq-osx-amd64</_Jq>
+    </PropertyGroup>
+    <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Linux'))">
+      <_Jq>../.jq/jq-linux64</_Jq>
+    </PropertyGroup>
+    <Error Condition="'$(_Jq)' == ''" Text="Unsupported operating system" />
+  </Target>
+
+  <Target Name="RestoreTools" BeforeTargets="GenerateAttribute">
+    <Exec Command="dotnet tool restore" />
+  </Target>
+
+  <Target Name="ReadManifest" AfterTargets="MinVer" DependsOnTargets="ResolveJq" Condition="'$(_ManifestRead)' == ''">
+    <PropertyGroup>
+      <_ManifestRead>not empty</_ManifestRead>
+    </PropertyGroup>
+
+    <Exec Command="$(_Jq) -r '.author, .name' 'manifest.json'" ConsoleToMSBuild="true">
+      <Output TaskParameter="ConsoleOutput" ItemName="_ManifestData" />
+    </Exec>
+    <GetNthItem Items="@(_ManifestData)" Index="0">
+      <Output TaskParameter="Item" PropertyName="_ManifestAuthor" />
+    </GetNthItem>
+    <GetNthItem Items="@(_ManifestData)" Index="1">
+      <Output TaskParameter="Item" PropertyName="_ManifestName" />
+    </GetNthItem>
+    <PropertyGroup>
+      <_ManifestVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch)</_ManifestVersion>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="GenerateManifest" AfterTargets="ReadManifest" Condition="'$(Configuration)' == 'Release' and '$(TargetFramework)' == 'NET35'">
+    <MakeDir Directories="thunderstore/src;thunderstore/out" />
+    <Exec Command="jq --compact-output --arg version '$(_ManifestVersion)' '.version_number = $version' 'manifest.json'" ConsoleToMSBuild="true">
+      <Output TaskParameter="ConsoleOutput" ItemName="_FinalManifest" />
+    </Exec>
+    <WriteLinesToFile File="thunderstore/src/manifest.json" Lines="@(_FinalManifest)" Overwrite="true" />
+  </Target>
+
+  <Target Name="ZipThunderstore" AfterTargets="Build" Condition="'$(Configuration)' == Release and '$(TargetFramework)' == NET35">
+    <ItemGroup>
+      <!-- Uncomment any of the items below to use them. They must not be empty. -->
+      <!-- Common macros:
+       TargetPath: the path to the built DLL (the one that the project makes)
+       TargetDir: the path to the directory of build results; the directory of TargetPath
+      -->
+
+      <!-- <_CoreToCopy Include="" /> -->
+      <!-- <_PatchersToCopy Include="" /> -->
+      <!-- <_MonoModsToCopy Include="" /> -->
+      <_PluginsToCopy Include="$(TargetPath)" />
+    </ItemGroup>
+
+    <Copy Condition="'@(_CoreToCopy)' != ''" SourceFiles="@(_CoreToCopy)" DestinationFolder="thunderstore/src/core" UseSymboliclinksIfPossible="true" />
+    <Copy Condition="'@(_PatchersToCopy)' != ''" SourceFiles="@(_PatchersToCopy)" DestinationFolder="thunderstore/src/patchers" UseSymboliclinksIfPossible="true" />
+    <Copy Condition="'@(_MonoModsToCopy)' != ''" SourceFiles="@(_MonoModsToCopy)" DestinationFolder="thunderstore/src/monomod" UseSymboliclinksIfPossible="true" />
+    <Copy Condition="'@(_PluginsToCopy)' != ''" SourceFiles="@(_PluginsToCopy)" DestinationFolder="thunderstore/src/plugins" UseSymboliclinksIfPossible="true" />
+
+    <ZipDirectory DestinationFile="thunderstore/out/$(_ManifestAuthor)-$(_ManifestName)-$(_ManifestVersion).zip" SourceDirectory="thunderstore/src" Overwrite="true" />
+  </Target>
 
 </Project>
