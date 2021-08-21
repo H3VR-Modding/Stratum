@@ -149,6 +149,8 @@ namespace Stratum.Internal.Staging
 						events.BatchLoaded(batchClock.Elapsed, i, loadedPluginsBuffer);
 
 						batchClock.Reset();
+
+						++i;
 					}
 
 					stageClock.Stop();

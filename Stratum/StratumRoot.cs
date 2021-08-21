@@ -113,18 +113,22 @@ namespace Stratum
 		{
 			void StageLoading(object sender, StageLoadingEventArgs args)
 			{
-				Logger.LogDebug($"Loading {args.Stage.ToFriendlyString()} stage");
+				StringBuilder builder = new StringBuilder("Loading ")
+					.AppendExt(args.Stage)
+					.Append(" stage");
+
+				Logger.LogDebug(builder.ToString());
 			}
 
 			void BatchLoading(object sender, BatchLoadingEventArgs args)
 			{
-				StringBuilder builder = new StringBuilder("Loading  ")
+				StringBuilder builder = new StringBuilder("Loading ")
 					.AppendExt(args)
-					.Append(':').AppendLine();
+					.Append(':');
 
 				IReadOnlyList<IReadOnlyStratumPlugin> plugins = args.Plugins;
 				for (var i = 0; i < plugins.Count; ++i)
-					builder.Append(i + 1).Append(": ").AppendExt(plugins[i]).AppendLine();
+					builder.AppendLine().Append(i + 1).Append(": ").AppendExt(plugins[i]);
 
 				Logger.LogDebug(builder.ToString());
 			}
@@ -183,8 +187,7 @@ namespace Stratum
 			{
 				StringBuilder builder = new StringBuilder("Loaded ")
 					.AppendExt((IEventBatch<ILoadedPlugin>) args)
-					.Append(':')
-					.AppendLine();
+					.Append(':');
 
 				IReadOnlyList<ILoadedPlugin> plugins = args.Plugins;
 				for (var i = 0; i < plugins.Count; ++i)
@@ -192,14 +195,14 @@ namespace Stratum
 					ILoadedPlugin plugin = plugins[i];
 
 					builder
+						.AppendLine()
 						.Append(i + 1)
 						.Append(": ")
 						.AppendExt(plugin.Plugin)
 						.Append(' ')
 						.Append(plugin.Success ? "succeeded" : "failed")
 						.Append(" in ")
-						.AppendExt(plugin)
-						.AppendLine();
+						.AppendExt(plugin);
 				}
 
 				Logger.LogDebug(builder.ToString());
@@ -211,18 +214,17 @@ namespace Stratum
 					.Append(args.Stage.ToFriendlyString())
 					.Append(" stage in ")
 					.AppendExt(args)
-					.Append(':')
-					.AppendLine();
+					.Append(':');
 
 				foreach (ILoadedBatch batch in args.Batches)
 				{
 					builder
+						.AppendLine()
 						.Append(batch.Generation + 1)
 						.Append(": ")
 						.Append(batch.Plugins.Count)
 						.Append(" plugins in ")
-						.AppendExt((IEventBatch<ILoadedPlugin>) batch)
-						.AppendLine();
+						.AppendExt((IEventBatch<ILoadedPlugin>) batch);
 				}
 
 				Logger.LogDebug(builder.ToString());
@@ -230,7 +232,11 @@ namespace Stratum
 
 			void LoadingComplete(object sender, LoadedStratumEventArgs args)
 			{
-				Logger.LogMessage($"Loading complete ({args.Duration.TotalSeconds:F3}s)");
+				StringBuilder builder = new StringBuilder("Loading complete (")
+					.AppendExt(args)
+					.Append(')');
+
+				Logger.LogMessage(builder.ToString());
 			}
 
 			StageEvents.Any.StageLoading += StageLoading;
