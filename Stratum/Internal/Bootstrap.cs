@@ -47,63 +47,63 @@ namespace Stratum.Internal
 		{
 			Graph<IStratumPlugin, bool> graph = PluginsToGraph(plugins);
 			DependencyEnumerable<IStratumPlugin> deps = new(graph);
-			_scheduler = new(deps);
+			_scheduler = new Scheduler(deps);
 
 			_events = events;
 		}
 
 		private void RunSetup()
-        {
-        	Scheduler.Runner<Empty> runner = Scheduler.ImmediateRunner;
-            using Stage<Empty> stage = new(new SetupStageEssence(), _scheduler.Count);
+		{
+			Scheduler.Runner<Empty> runner = Scheduler.ImmediateRunner;
+			using Stage<Empty> stage = new(new SetupStageEssence(), _scheduler.Count);
 
-            _scheduler.Run(stage, runner, _events.Setup);
-        }
+			_scheduler.Run(stage, runner, _events.Setup);
+		}
 
-        private void RunRuntime(CoroutineStarter startCoroutine, Stopwatch clock)
-        {
-        	Scheduler.Runner<IEnumerator> runner = Scheduler.DelayedRunner(startCoroutine);
+		private void RunRuntime(CoroutineStarter startCoroutine, Stopwatch clock)
+		{
+			Scheduler.Runner<IEnumerator> runner = Scheduler.DelayedRunner(startCoroutine);
 
-        	// Don't dispose this, it will die before the coroutine starts.
-        	// Also, stuff in runtime can be used throughout runtime.
-        	Stage<IEnumerator> stage = new(new RuntimeStageEssence(), _scheduler.Count);
+			// Don't dispose this, it will die before the coroutine starts.
+			// Also, stuff in runtime can be used throughout runtime.
+			Stage<IEnumerator> stage = new(new RuntimeStageEssence(), _scheduler.Count);
 
-            // Copy because closures cannot access fields, only locals
-            EventInvocators events = _events;
-            try
-            {
-	            // ReSharper disable once AccessToDisposedClosure	It's only disposed if the code throws, in which case the lambda wont run
-	            IEnumerator exec = _scheduler
-		            .Run(stage, runner, events.Runtime)
-		            .TryFinally(() => stage.Dispose())
-		            .ContinueWith(() =>
-		            {
-			            clock.Stop();
+			// Copy because closures cannot access fields, only locals
+			EventInvocators events = _events;
+			try
+			{
+				// ReSharper disable once AccessToDisposedClosure	It's only disposed if the code throws, in which case the lambda wont run
+				IEnumerator exec = _scheduler
+					.Run(stage, runner, events.Runtime)
+					.TryFinally(() => stage.Dispose())
+					.ContinueWith(() =>
+					{
+						clock.Stop();
 
-			            if (events.Complete is { } invoke)
-			            {
-				            LoadedStratumEventArgs loadedStratum = new(clock.Elapsed);
+						if (events.Complete is { } invoke)
+						{
+							LoadedStratumEventArgs loadedStratum = new(clock.Elapsed);
 
-				            invoke(loadedStratum);
-			            }
-		            });
+							invoke(loadedStratum);
+						}
+					});
 
-	            startCoroutine(exec);
-            }
-            catch // Don't use finally. This should only be ran when the enumerator fails to execute.
-            {
-	            stage.Dispose();
+				startCoroutine(exec);
+			}
+			catch // Don't use finally. This should only be ran when the enumerator fails to execute.
+			{
+				stage.Dispose();
 
-	            throw;
-            }
-        }
+				throw;
+			}
+		}
 
-        public void Run(CoroutineStarter startCoroutine)
-        {
-	        Stopwatch clock = Stopwatch.StartNew();
+		public void Run(CoroutineStarter startCoroutine)
+		{
+			Stopwatch clock = Stopwatch.StartNew();
 
-	        RunSetup();
-		    RunRuntime(startCoroutine, clock);
-        }
+			RunSetup();
+			RunRuntime(startCoroutine, clock);
+		}
 	}
 }

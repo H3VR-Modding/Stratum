@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Stratum
 {
 	/// <summary>
-	///		Event data for when a plugin errors while loading
+	///     Event data for when a plugin errors while loading
 	/// </summary>
 	public sealed class PluginFailedEventArgs : EventArgs, ILoadedPlugin
 	{
@@ -18,25 +18,25 @@ namespace Stratum
 			Exception = exception;
 		}
 
-		/// <inheritdoc cref="ITimed.Duration"/>
+		/// <inheritdoc cref="ITimed.Duration" />
 		public TimeSpan Duration { get; }
 
-		/// <inheritdoc cref="IHasStage.Stage"/>
+		/// <inheritdoc cref="IHasStage.Stage" />
 		public Stages Stage { get; }
 
-		/// <inheritdoc cref="ILoadedPlugin.Plugin"/>
+		/// <inheritdoc cref="ILoadedPlugin.Plugin" />
 		public IReadOnlyStratumPlugin Plugin { get; }
 
-		/// <inheritdoc cref="ILoadedPlugin.Success"/>
+		/// <inheritdoc cref="ILoadedPlugin.Success" />
 		public bool Success => false;
 
 		/// <summary>
-		///		The plugins that depend on the failed plugin
+		///     The plugins that depend on the failed plugin
 		/// </summary>
 		public IReadOnlyList<IReadOnlyStratumPlugin> Dependents { get; }
 
 		/// <summary>
-		///		The exception thrown by the plugin
+		///     The exception thrown by the plugin
 		/// </summary>
 		public Exception Exception { get; }
 	}

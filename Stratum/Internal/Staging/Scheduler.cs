@@ -166,12 +166,12 @@ namespace Stratum.Internal.Staging
 
 		private readonly DependencyEnumerable<IStratumPlugin> _plugins;
 
-		public int Count => _plugins.Count;
-
 		public Scheduler(DependencyEnumerable<IStratumPlugin> plugins)
 		{
 			_plugins = plugins;
 		}
+
+		public int Count => _plugins.Count;
 
 		public TRet Run<TRet>(Stage<TRet> stage, Runner<TRet> runner, DefaultStageEvents.Invocators events)
 		{
@@ -180,9 +180,9 @@ namespace Stratum.Internal.Staging
 
 		public class Invocators<TRet>
 		{
+			private readonly DefaultStageEvents.Invocators _events;
 			private readonly Scheduler _scheduler;
 			private readonly Stage<TRet> _stage;
-			private readonly DefaultStageEvents.Invocators _events;
 
 			public Invocators(Scheduler scheduler, Stage<TRet> stage, DefaultStageEvents.Invocators events)
 			{

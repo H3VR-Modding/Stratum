@@ -8,9 +8,9 @@ namespace Stratum.Internal.Staging
 	internal class Stage<TRet> : IStage<TRet>, IDisposable
 	{
 		private readonly IStageEssence<TRet> _essence;
+		private Dictionary<string, StageContext<TRet>>? _contexts;
 
 		private bool _disposed;
-		private Dictionary<string, StageContext<TRet>>? _contexts;
 
 		public Stage(IStageEssence<TRet> essence, int count)
 		{
@@ -18,11 +18,13 @@ namespace Stratum.Internal.Staging
 			_contexts = new Dictionary<string, StageContext<TRet>>(count);
 		}
 
-		private Dictionary<string, StageContext<TRet>> Contexts => _contexts ?? throw new ObjectDisposedException(GetType().FullName);
+		private Dictionary<string, StageContext<TRet>> Contexts =>
+			_contexts ?? throw new ObjectDisposedException(GetType().FullName);
 
 		public Stages Variant => _essence.Variant;
 
-		public IReadOnlyStageContext<TRet> this[string guid] => TryGet(guid) ?? throw new InvalidOperationException("The plugin" +
+		public IReadOnlyStageContext<TRet> this[string guid] => TryGet(guid) ?? throw new InvalidOperationException(
+			"The plugin" +
 			$"with the GUID '{guid}' was not found.");
 
 		public void Dispose()

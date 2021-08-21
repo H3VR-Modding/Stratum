@@ -54,7 +54,7 @@ namespace Stratum.Jobs
 		public TSelf WithName(string? name)
 		{
 			Name = name;
-			return (TSelf) this;
+			return (TSelf)this;
 		}
 
 		/// <summary>
@@ -64,7 +64,7 @@ namespace Stratum.Jobs
 		public TSelf AddJob(Job<TRet> job)
 		{
 			Jobs.Add(job);
-			return (TSelf) this;
+			return (TSelf)this;
 		}
 
 		/// <summary>
@@ -113,14 +113,14 @@ namespace Stratum.Jobs
 		private Pipeline(Pipeline<TRet> parent) : base(parent) { }
 
 		/// <summary>
-		///		Creates an instance of <see cref="Pipeline{TRet,TSelf}"/>
+		///     Creates an instance of <see cref="Pipeline{TRet,TSelf}" />
 		/// </summary>
 		public Pipeline() { }
 
 		/// <inheritdoc cref="Pipeline{TRet,TSelf}.CreateNested" />
 		protected override Pipeline<TRet> CreateNested()
 		{
-			return new(this);
+			return new Pipeline<TRet>(this);
 		}
 	}
 
@@ -142,7 +142,8 @@ namespace Stratum.Jobs
 			return Job;
 		}
 
-		private static Job<IEnumerator> RuntimeSequentialBuilder<TSelf>(TSelf pipeline) where TSelf : Pipeline<IEnumerator, TSelf>
+		private static Job<IEnumerator> RuntimeSequentialBuilder<TSelf>(TSelf pipeline)
+			where TSelf : Pipeline<IEnumerator, TSelf>
 		{
 			IEnumerator Job(IStage<IEnumerator> stage, ManualLogSource logger)
 			{
@@ -190,7 +191,8 @@ namespace Stratum.Jobs
 		/// </summary>
 		/// <param name="this"></param>
 		/// <param name="nested">Modifiers to apply to the pipeline</param>
-		public static TSelf AddNested<TSelf>(this TSelf @this, Action<TSelf> nested) where TSelf : Pipeline<Empty, TSelf>
+		public static TSelf AddNested<TSelf>(this TSelf @this, Action<TSelf> nested)
+			where TSelf : Pipeline<Empty, TSelf>
 		{
 			return @this.AddNested(nested, SetupBuilder);
 		}
@@ -200,7 +202,8 @@ namespace Stratum.Jobs
 		/// </summary>
 		/// <param name="this"></param>
 		/// <param name="nested">Modifiers to apply to the pipeline</param>
-		public static TSelf AddNestedSequential<TSelf>(this TSelf @this, Action<TSelf> nested) where TSelf : Pipeline<IEnumerator, TSelf>
+		public static TSelf AddNestedSequential<TSelf>(this TSelf @this, Action<TSelf> nested)
+			where TSelf : Pipeline<IEnumerator, TSelf>
 		{
 			return @this.AddNested(nested, RuntimeSequentialBuilder);
 		}
@@ -211,7 +214,8 @@ namespace Stratum.Jobs
 		/// <param name="this"></param>
 		/// <param name="nested">Modifiers to apply to the pipeline</param>
 		/// <param name="startCoroutine">The method to start Unity coroutines with</param>
-		public static TSelf AddNestedParallel<TSelf>(this TSelf @this, Action<TSelf> nested, CoroutineStarter startCoroutine)
+		public static TSelf AddNestedParallel<TSelf>(this TSelf @this, Action<TSelf> nested,
+			CoroutineStarter startCoroutine)
 			where TSelf : Pipeline<IEnumerator, TSelf>
 		{
 			return @this.AddNested(nested, pipeline => RuntimeParallelBuilder(pipeline, startCoroutine));
@@ -230,7 +234,8 @@ namespace Stratum.Jobs
 		///     Creates a job to run the pipeline using the sequential runtime builder
 		/// </summary>
 		/// <param name="this"></param>
-		public static Job<IEnumerator> BuildSequential<TSelf>(this TSelf @this) where TSelf : Pipeline<IEnumerator, TSelf>
+		public static Job<IEnumerator> BuildSequential<TSelf>(this TSelf @this)
+			where TSelf : Pipeline<IEnumerator, TSelf>
 		{
 			return RuntimeSequentialBuilder(@this);
 		}

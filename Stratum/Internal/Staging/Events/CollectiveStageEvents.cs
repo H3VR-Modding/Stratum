@@ -4,12 +4,12 @@ namespace Stratum.Internal.Staging.Events
 {
 	internal class CollectiveStageEvents : IStageEvents
 	{
+		private readonly IStageEvents[] _events;
+
 		public CollectiveStageEvents(params IStageEvents[] events)
 		{
 			_events = events;
 		}
-
-		private readonly IStageEvents[] _events;
 
 		public event EventHandler<StageLoadingEventArgs>? StageLoading
 		{

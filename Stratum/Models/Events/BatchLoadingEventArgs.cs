@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Stratum
 {
 	/// <summary>
-	///		Event data for when a batch of plugins begins to load
+	///     Event data for when a batch of plugins begins to load
 	/// </summary>
 	public sealed class BatchLoadingEventArgs : EventArgs, IEventBatch<IReadOnlyStratumPlugin>
 	{
@@ -15,13 +15,13 @@ namespace Stratum
 			Plugins = plugins;
 		}
 
-		/// <inheritdoc cref="IHasStage.Stage"/>
+		/// <inheritdoc cref="IHasStage.Stage" />
 		public Stages Stage { get; }
 
-		/// <inheritdoc cref="IEventBatch{TPlugin}.Generation"/>
+		/// <inheritdoc cref="IEventBatch{TPlugin}.Generation" />
 		public int Generation { get; }
 
-		/// <inheritdoc cref="IEventBatch{TPlugin}.Plugins"/>
+		/// <inheritdoc cref="IEventBatch{TPlugin}.Plugins" />
 		public IReadOnlyList<IReadOnlyStratumPlugin> Plugins { get; }
 	}
 }

@@ -39,13 +39,17 @@ namespace Stratum
 
 		private static StratumRoot? _instance;
 
+		private readonly List<IStratumPlugin> _plugins = new();
+
+		private bool _started;
+
 		/// <summary>
-		///		All the <see cref="IStageEvents"/> that can be subscribed to
+		///     All the <see cref="IStageEvents" /> that can be subscribed to
 		/// </summary>
 		public static AllStageEvents StageEvents { get; } = new(SetupEvents, RuntimeEvents);
 
 		/// <summary>
-		///		Invoked when Stratum finishes loading all stages
+		///     Invoked when Stratum finishes loading all stages
 		/// </summary>
 		public static event EventHandler<LoadedStratumEventArgs>? LoadingComplete;
 
@@ -63,10 +67,6 @@ namespace Stratum
 			_instance.InjectInstance(plugin);
 		}
 
-		private readonly List<IStratumPlugin> _plugins = new();
-
-		private bool _started;
-
 		private void Awake()
 		{
 			_instance = this;
@@ -78,8 +78,9 @@ namespace Stratum
 		{
 			// BepInEx.ScriptEngine
 			if (_started)
-				throw new InvalidOperationException("Plugins cannot be injected after stage execution begins. This is likely " +
-				                                    "from the plugin being reloaded via BepInEx.ScriptEngine.");
+				throw new InvalidOperationException(
+					"Plugins cannot be injected after stage execution begins. This is likely " +
+					"from the plugin being reloaded via BepInEx.ScriptEngine.");
 
 			// Avoid duplicating any plugins
 			if (_plugins.Contains(plugin))
@@ -159,10 +160,7 @@ namespace Stratum
 				{
 					using IEnumerator<IReadOnlyStratumPlugin> enumerator = args.Dependents.GetEnumerator();
 
-					bool Next()
-					{
-						return enumerator.MoveNext();
-					}
+					bool Next() => enumerator.MoveNext();
 
 					if (Next())
 					{
@@ -186,7 +184,7 @@ namespace Stratum
 			void BatchLoaded(object sender, BatchLoadedEventArgs args)
 			{
 				StringBuilder builder = new StringBuilder("Loaded ")
-					.AppendExt((IEventBatch<ILoadedPlugin>) args)
+					.AppendExt((IEventBatch<ILoadedPlugin>)args)
 					.Append(':');
 
 				IReadOnlyList<ILoadedPlugin> plugins = args.Plugins;
@@ -217,15 +215,13 @@ namespace Stratum
 					.Append(':');
 
 				foreach (ILoadedBatch batch in args.Batches)
-				{
 					builder
 						.AppendLine()
 						.Append(batch.Generation + 1)
 						.Append(": ")
 						.Append(batch.Plugins.Count)
 						.Append(" plugins in ")
-						.AppendExt((IEventBatch<ILoadedPlugin>) batch);
-				}
+						.AppendExt((IEventBatch<ILoadedPlugin>)batch);
 
 				Logger.LogDebug(builder.ToString());
 			}

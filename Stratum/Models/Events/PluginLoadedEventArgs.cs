@@ -3,7 +3,7 @@ using System;
 namespace Stratum
 {
 	/// <summary>
-	///		Event data for when a plugin finishes loading
+	///     Event data for when a plugin finishes loading
 	/// </summary>
 	public sealed class PluginLoadedEventArgs : EventArgs, ILoadedPlugin
 	{
@@ -14,16 +14,16 @@ namespace Stratum
 			Plugin = plugin;
 		}
 
-		/// <inheritdoc cref="IHasStage.Stage"/>
+		/// <inheritdoc cref="IHasStage.Stage" />
 		public Stages Stage { get; }
 
-		/// <inheritdoc cref="ITimed.Duration"/>
+		/// <inheritdoc cref="ITimed.Duration" />
 		public TimeSpan Duration { get; }
 
-		/// <inheritdoc cref="ILoadedPlugin.Plugin"/>
+		/// <inheritdoc cref="ILoadedPlugin.Plugin" />
 		public IReadOnlyStratumPlugin Plugin { get; }
 
-		/// <inheritdoc cref="ILoadedPlugin.Success"/>
+		/// <inheritdoc cref="ILoadedPlugin.Success" />
 		public bool Success => true;
 	}
 }

@@ -16,7 +16,8 @@ namespace Stratum
 	}
 
 	/// <summary>
-	///     Represents a plugin that can be inserted into Stratum. Unless you are inheriting from another <see cref="MonoBehaviour" />, you
+	///     Represents a plugin that can be inserted into Stratum. Unless you are inheriting from another
+	///     <see cref="MonoBehaviour" />, you
 	///     should inherit from <see cref="StratumPlugin" />, which implements this interface for you.
 	/// </summary>
 	public interface IStratumPlugin : IReadOnlyStratumPlugin
@@ -28,7 +29,8 @@ namespace Stratum
 		void OnSetup(IStageContext<Empty> ctx);
 
 		/// <summary>
-		///     Called after <see cref="OnSetup" />. This method is a Unity coroutine, and may span multiple frames (as can the stage).
+		///     Called after <see cref="OnSetup" />. This method is a Unity coroutine, and may span multiple frames (as can the
+		///     stage).
 		/// </summary>
 		/// <param name="ctx">Plugin-specific information relevant to this stage</param>
 		/// <returns>A Unity coroutine</returns>

@@ -22,7 +22,8 @@ namespace Stratum
 		}
 
 		/// <summary>
-		///     The basic directories that this plugin has control over. Beware: there is no collision detection; another plugin can use the
+		///     The basic directories that this plugin has control over. Beware: there is no collision detection; another plugin
+		///     can use the
 		///     same directories.
 		/// </summary>
 		protected PluginDirectories Directories { get; }

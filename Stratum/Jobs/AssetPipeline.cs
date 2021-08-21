@@ -72,7 +72,7 @@ namespace Stratum.Jobs
 		/// <inheritdoc cref="Pipeline{TRet,TSelf}.CreateNested" />
 		protected override AssetPipeline<TRet> CreateNested()
 		{
-			return new(this, Root);
+			return new AssetPipeline<TRet>(this, Root);
 		}
 	}
 }

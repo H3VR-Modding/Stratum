@@ -79,10 +79,11 @@ namespace Stratum.Extensions
 		///     exception.
 		/// </param>
 		/// <param name="success">
-		///		The method to call once the enumerator has completed and no exception has been thrown.
+		///     The method to call once the enumerator has completed and no exception has been thrown.
 		/// </param>
 		/// <typeparam name="TException">The type of exception to catch</typeparam>
-		public static IEnumerator TryCatch<TException>(this IEnumerator @this, Func<TException, bool> @catch, Func<IEnumerator> success) where TException : Exception
+		public static IEnumerator TryCatch<TException>(this IEnumerator @this, Func<TException, bool> @catch,
+			Func<IEnumerator> success) where TException : Exception
 		{
 			var threw = false;
 
@@ -112,14 +113,18 @@ namespace Stratum.Extensions
 				yield return item;
 		}
 
-		/// <inheritdoc cref="TryCatch{TException}(System.Collections.IEnumerator,System.Func{TException,bool},System.Func{System.Collections.IEnumerator})"/>
-		public static IEnumerator TryCatch<TException>(this IEnumerator @this, Func<TException, bool> @catch, Action success) where TException : Exception
+		/// <inheritdoc
+		///     cref="TryCatch{TException}(System.Collections.IEnumerator,System.Func{TException,bool},System.Func{System.Collections.IEnumerator})" />
+		public static IEnumerator TryCatch<TException>(this IEnumerator @this, Func<TException, bool> @catch,
+			Action success) where TException : Exception
 		{
 			return @this.TryCatch(@catch, NopEnumerator(success));
 		}
 
-		/// <inheritdoc cref="TryCatch{TException}(System.Collections.IEnumerator,System.Func{TException,bool},System.Func{System.Collections.IEnumerator})"/>
-		public static IEnumerator TryCatch<TException>(this IEnumerator @this, Func<TException, bool> @catch) where TException : Exception
+		/// <inheritdoc
+		///     cref="TryCatch{TException}(System.Collections.IEnumerator,System.Func{TException,bool},System.Func{System.Collections.IEnumerator})" />
+		public static IEnumerator TryCatch<TException>(this IEnumerator @this, Func<TException, bool> @catch)
+			where TException : Exception
 		{
 			return @this.TryCatch(@catch, NopAction);
 		}
@@ -130,57 +135,69 @@ namespace Stratum.Extensions
 		/// <param name="this"></param>
 		/// <param name="catch">The method to call once the exception has been thrown</param>
 		/// <param name="success">
-		///		The method to call once the enumerator has completed and no exception has been thrown.
+		///     The method to call once the enumerator has completed and no exception has been thrown.
 		/// </param>
 		/// <typeparam name="TException">The type of exception to catch</typeparam>
-		public static IEnumerator TryCatch<TException>(this IEnumerator @this, Action<TException> @catch, Func<IEnumerator> success) where TException : Exception
+		public static IEnumerator TryCatch<TException>(this IEnumerator @this, Action<TException> @catch,
+			Func<IEnumerator> success) where TException : Exception
 		{
 			return @this.TryCatch(NopCatch(@catch), success);
 		}
 
-		/// <inheritdoc cref="TryCatch{TException}(System.Collections.IEnumerator,System.Action{TException},System.Func{System.Collections.IEnumerator})"/>
-		public static IEnumerator TryCatch<TException>(this IEnumerator @this, Action<TException> @catch, Action success) where TException : Exception
+		/// <inheritdoc
+		///     cref="TryCatch{TException}(System.Collections.IEnumerator,System.Action{TException},System.Func{System.Collections.IEnumerator})" />
+		public static IEnumerator TryCatch<TException>(this IEnumerator @this, Action<TException> @catch,
+			Action success) where TException : Exception
 		{
 			return @this.TryCatch(NopCatch(@catch), NopEnumerator(success));
 		}
 
-		/// <inheritdoc cref="TryCatch{TException}(System.Collections.IEnumerator,System.Action{TException},System.Func{System.Collections.IEnumerator})"/>
-		public static IEnumerator TryCatch<TException>(this IEnumerator @this, Action<TException> @catch) where TException : Exception
+		/// <inheritdoc
+		///     cref="TryCatch{TException}(System.Collections.IEnumerator,System.Action{TException},System.Func{System.Collections.IEnumerator})" />
+		public static IEnumerator TryCatch<TException>(this IEnumerator @this, Action<TException> @catch)
+			where TException : Exception
 		{
 			return @this.TryCatch(NopCatch(@catch), NopAction);
 		}
 
-		/// <inheritdoc cref="TryCatch{TException}(System.Collections.IEnumerator,System.Func{TException,bool},System.Func{System.Collections.IEnumerator})"/>
-		public static IEnumerator TryCatch(this IEnumerator @this, Func<Exception, bool> @catch, Func<IEnumerator> success)
+		/// <inheritdoc
+		///     cref="TryCatch{TException}(System.Collections.IEnumerator,System.Func{TException,bool},System.Func{System.Collections.IEnumerator})" />
+		public static IEnumerator TryCatch(this IEnumerator @this, Func<Exception, bool> @catch,
+			Func<IEnumerator> success)
 		{
 			return @this.TryCatch<Exception>(@catch, success);
 		}
 
-		/// <inheritdoc cref="TryCatch{TException}(System.Collections.IEnumerator,System.Func{TException,bool},System.Func{System.Collections.IEnumerator})"/>
+		/// <inheritdoc
+		///     cref="TryCatch{TException}(System.Collections.IEnumerator,System.Func{TException,bool},System.Func{System.Collections.IEnumerator})" />
 		public static IEnumerator TryCatch(this IEnumerator @this, Func<Exception, bool> @catch, Action success)
 		{
 			return @this.TryCatch<Exception>(@catch, success);
 		}
 
-		/// <inheritdoc cref="TryCatch{TException}(System.Collections.IEnumerator,System.Func{TException,bool},System.Func{System.Collections.IEnumerator})"/>
+		/// <inheritdoc
+		///     cref="TryCatch{TException}(System.Collections.IEnumerator,System.Func{TException,bool},System.Func{System.Collections.IEnumerator})" />
 		public static IEnumerator TryCatch(this IEnumerator @this, Func<Exception, bool> @catch)
 		{
 			return @this.TryCatch<Exception>(@catch);
 		}
 
-		/// <inheritdoc cref="TryCatch{TException}(System.Collections.IEnumerator,System.Action{TException},System.Func{System.Collections.IEnumerator})"/>
+		/// <inheritdoc
+		///     cref="TryCatch{TException}(System.Collections.IEnumerator,System.Action{TException},System.Func{System.Collections.IEnumerator})" />
 		public static IEnumerator TryCatch(this IEnumerator @this, Action<Exception> @catch, Func<IEnumerator> success)
 		{
 			return @this.TryCatch<Exception>(@catch, success);
 		}
 
-		/// <inheritdoc cref="TryCatch{TException}(System.Collections.IEnumerator,System.Action{TException},System.Func{System.Collections.IEnumerator})"/>
+		/// <inheritdoc
+		///     cref="TryCatch{TException}(System.Collections.IEnumerator,System.Action{TException},System.Func{System.Collections.IEnumerator})" />
 		public static IEnumerator TryCatch(this IEnumerator @this, Action<Exception> @catch, Action success)
 		{
 			return @this.TryCatch<Exception>(@catch, success);
 		}
 
-		/// <inheritdoc cref="TryCatch{TException}(System.Collections.IEnumerator,System.Action{TException},System.Func{System.Collections.IEnumerator})"/>
+		/// <inheritdoc
+		///     cref="TryCatch{TException}(System.Collections.IEnumerator,System.Action{TException},System.Func{System.Collections.IEnumerator})" />
 		public static IEnumerator TryCatch(this IEnumerator @this, Action<Exception> @catch)
 		{
 			return @this.TryCatch<Exception>(@catch);

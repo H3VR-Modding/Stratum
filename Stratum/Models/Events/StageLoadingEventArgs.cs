@@ -3,7 +3,7 @@ using System;
 namespace Stratum
 {
 	/// <summary>
-	///		Event data for when a stage begins to load
+	///     Event data for when a stage begins to load
 	/// </summary>
 	public sealed class StageLoadingEventArgs : EventArgs, IHasStage
 	{
@@ -12,7 +12,7 @@ namespace Stratum
 			Stage = stage;
 		}
 
-		/// <inheritdoc cref="IHasStage.Stage"/>
+		/// <inheritdoc cref="IHasStage.Stage" />
 		public Stages Stage { get; }
 	}
 }

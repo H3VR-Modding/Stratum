@@ -9,14 +9,14 @@ namespace Stratum.Internal.Staging.Events
 			Invoke = new Invocators(this);
 		}
 
+		public Invocators Invoke { get; }
+
 		public event EventHandler<StageLoadingEventArgs>? StageLoading;
 		public event EventHandler<BatchLoadingEventArgs>? BatchLoading;
 		public event EventHandler<PluginLoadedEventArgs>? PluginLoaded;
 		public event EventHandler<PluginFailedEventArgs>? PluginFailed;
 		public event EventHandler<BatchLoadedEventArgs>? BatchLoaded;
 		public event EventHandler<StageLoadedEventArgs>? StageLoaded;
-
-		public Invocators Invoke { get; }
 
 		public readonly struct Invocators
 		{

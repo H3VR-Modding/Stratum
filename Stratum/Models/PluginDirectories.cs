@@ -3,7 +3,8 @@ using System.IO;
 namespace Stratum
 {
 	/// <summary>
-	///     Commonly used directories of plugins. Beware: there is no collision detection; another plugin can use the same directories.
+	///     Commonly used directories of plugins. Beware: there is no collision detection; another plugin can use the same
+	///     directories.
 	/// </summary>
 	public sealed class PluginDirectories
 	{
@@ -27,7 +28,8 @@ namespace Stratum
 		public DirectoryInfo Resources => _resources ??= _root.CreateSubdirectory("resources");
 
 		/// <summary>
-		///     Files and directories created and read by the plugin, which can be deleted with little to no repercussions. For example,
+		///     Files and directories created and read by the plugin, which can be deleted with little to no repercussions. For
+		///     example,
 		///     saved web API responses
 		/// </summary>
 		public DirectoryInfo Cache => _cache ??= _root.CreateSubdirectory("cache");

@@ -17,7 +17,8 @@ namespace Stratum.Internal.IO
 		}
 	}
 
-	internal class LoaderDictionary<TRet> : IDictionary<string, Loader<TRet>>, IReadOnlyDictionary<string, Loader<TRet>>, IFreezable,
+	internal class LoaderDictionary<TRet> : IDictionary<string, Loader<TRet>>,
+		IReadOnlyDictionary<string, Loader<TRet>>, IFreezable,
 		IDisposable
 	{
 		// A shortcut
@@ -34,12 +35,16 @@ namespace Stratum.Internal.IO
 			_read = _write = new Dictionary<string, Loader<TRet>>();
 		}
 
-		private IDictionary<string, Loader<TRet>> Read => _read ?? throw new ObjectDisposedException(GetType().FullName);
-		private IDictionary<string, Loader<TRet>> Write => _write ?? throw new ObjectFrozenException(GetType().FullName);
+		private IDictionary<string, Loader<TRet>> Read =>
+			_read ?? throw new ObjectDisposedException(GetType().FullName);
+
+		private IDictionary<string, Loader<TRet>> Write =>
+			_write ?? throw new ObjectFrozenException(GetType().FullName);
 
 		public int Count => Read.Count;
 
-		public bool IsReadOnly => _write == null && (_read != null ? true : throw new ObjectDisposedException(GetType().FullName));
+		public bool IsReadOnly =>
+			_write == null && (_read != null ? true : throw new ObjectDisposedException(GetType().FullName));
 
 		public ICollection<string> Keys => Read.Keys;
 

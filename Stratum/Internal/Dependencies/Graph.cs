@@ -26,7 +26,7 @@ namespace Stratum.Internal.Dependencies
 
 		public IEnumerator<Node> GetEnumerator()
 		{
-			return ((IEnumerable<Node>) _nodes).GetEnumerator();
+			return ((IEnumerable<Node>)_nodes).GetEnumerator();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
@@ -85,7 +85,8 @@ namespace Stratum.Internal.Dependencies
 			private readonly Dictionary<int, TEdge> _incoming;
 			private readonly Dictionary<int, TEdge> _outgoing;
 
-			private Node(Graph<TNode, TEdge> graph, Dictionary<int, TEdge> incoming, Dictionary<int, TEdge> outgoing, int value,
+			private Node(Graph<TNode, TEdge> graph, Dictionary<int, TEdge> incoming, Dictionary<int, TEdge> outgoing,
+				int value,
 				TNode metadata)
 			{
 				_graph = graph;
@@ -134,7 +135,7 @@ namespace Stratum.Internal.Dependencies
 
 			public Node Copy(Graph<TNode, TEdge> graph)
 			{
-				return new(graph, Copy(_incoming), Copy(_outgoing), Value, Metadata);
+				return new Node(graph, Copy(_incoming), Copy(_outgoing), Value, Metadata);
 			}
 
 			public void Attach(Node node, TEdge metadata)
