@@ -51,7 +51,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Thunderstore
-          path: '*/thunderstore/out/*'
+          path: Stratum/thunderstore/out/*
 
       - name: Pack NuGet
         run: dotnet pack -c Release Stratum

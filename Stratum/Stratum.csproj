@@ -116,7 +116,7 @@
       <!-- <_CoreToCopy Include="" /> -->
       <!-- <_PatchersToCopy Include="" /> -->
       <!-- <_MonoModsToCopy Include="" /> -->
-      <_PluginsToCopy Include="$(TargetPath)" />
+      <_PluginsToCopy Include="$(TargetPath);$(TargetDir)/ReadOnlyCollectionsInterfaces.dll" />
     </ItemGroup>
 
     <Copy Condition="'@(_CoreToCopy)' != ''" SourceFiles="@(_CoreToCopy)" DestinationFolder="thunderstore/src/core" UseSymboliclinksIfPossible="true" />
