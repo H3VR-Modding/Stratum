@@ -45,8 +45,7 @@
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
-
-
+  
   <ItemGroup>
     <None Remove="thunderstore/**" />
   </ItemGroup>
@@ -76,11 +75,11 @@
     <Error Condition="'$(_Jq)' == ''" Text="Unsupported operating system" />
   </Target>
 
-  <Target Name="RestoreTools">
+  <Target Name="RestoreTools" BeforeTargets="PreBuildEvent">
     <Exec Command="dotnet tool restore" />
   </Target>
 
-  <Target Name="ReadManifest" AfterTargets="MinVer" DependsOnTargets="ResolveJq">
+  <Target Name="ReadManifest" AfterTargets="MinVer" DependsOnTargets="ResolveJq" Condition="'$(Configuration)' == 'Release' and '$(TargetFramework)' == 'NET35'">
     <Exec Command="$(_Jq) -r '.author, .name' 'manifest.json'" ConsoleToMSBuild="true">
       <Output TaskParameter="ConsoleOutput" ItemName="_ManifestData" />
     </Exec>
@@ -96,7 +95,7 @@
   </Target>
 
 
-  <Target Name="GenerateAttribute" AfterTargets="ReadManifest" DependsOnTargets="RestoreTools">
+  <Target Name="GenerateAttribute" AfterTargets="MinVer">
     <Exec Command="dotnet t4 'StratumRootAttribute.tt' -p=Major=$(MinVerMajor) -p=Minor=$(MinVerMinor) -p=Patch=$(MinVerPatch)" />
   </Target>
 

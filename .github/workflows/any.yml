@@ -33,19 +33,17 @@ jobs:
         with:
           dotnet-version: 5.0.x
 
-      - name: Restore Tools
-        run: dotnet tool restore
+      - name: Restore
+        run: dotnet restore
 
       - name: Build
-        run: dotnet build -c Release Stratum
+        run: dotnet build -c Release --no-restore
 
       - name: Test
-        run: dotnet test -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+        run: dotnet test -c Release --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
 
-      - name: Push Code Coverage
-        uses: codecov/codecov-action@v2.0.2
-        with:
-          files: Stratum.Tests/coverage.opencover.xml
+      - name: Pack NuGet
+        run: dotnet pack -c Release --no-build Stratum
 
       - name: Upload Thunderstore
         uses: actions/upload-artifact@v2
@@ -53,11 +51,13 @@ jobs:
           name: Thunderstore
           path: Stratum/thunderstore/out/*
 
-      - name: Pack NuGet
-        run: dotnet pack -c Release Stratum
-
       - name: Upload NuGet
         uses: actions/upload-artifact@v2
         with:
           name: NuGet
           path: Stratum/nupkg/*
+
+      - name: Push Code Coverage
+        uses: codecov/codecov-action@v2.0.2
+        with:
+          files: Stratum.Tests/coverage.opencover.xml
