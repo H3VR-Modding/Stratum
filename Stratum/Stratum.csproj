@@ -36,7 +36,9 @@
   <ItemGroup>
     <PackageReference Include="BepInEx.Core" Version="5.4.11" />
     <PackageReference Include="UnityEngine.Core" Version="5.6.1" />
-    <PackageReference Include="ReadOnlyCollectionInterfaces" Version="1.0.0" />
+    <PackageReference Include="ReadOnlyCollectionInterfaces" Version="1.0.0">
+      <NoWarn>NU1701</NoWarn>
+    </PackageReference>
 
     <PackageReference Include="BepInEx.Analyzers" Version="1.0.4" PrivateAssets="all" />
     <PackageReference Include="MinVer" Version="2.5.0" PrivateAssets="all" />
@@ -74,15 +76,11 @@
     <Error Condition="'$(_Jq)' == ''" Text="Unsupported operating system" />
   </Target>
 
-  <Target Name="RestoreTools" BeforeTargets="GenerateAttribute">
+  <Target Name="RestoreTools">
     <Exec Command="dotnet tool restore" />
   </Target>
 
-  <Target Name="ReadManifest" AfterTargets="MinVer" DependsOnTargets="ResolveJq" Condition="'$(_ManifestRead)' == ''">
-    <PropertyGroup>
-      <_ManifestRead>not empty</_ManifestRead>
-    </PropertyGroup>
-
+  <Target Name="ReadManifest" AfterTargets="MinVer" DependsOnTargets="ResolveJq">
     <Exec Command="$(_Jq) -r '.author, .name' 'manifest.json'" ConsoleToMSBuild="true">
       <Output TaskParameter="ConsoleOutput" ItemName="_ManifestData" />
     </Exec>
@@ -95,6 +93,11 @@
     <PropertyGroup>
       <_ManifestVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch)</_ManifestVersion>
     </PropertyGroup>
+  </Target>
+
+
+  <Target Name="GenerateAttribute" AfterTargets="ReadManifest" DependsOnTargets="RestoreTools">
+    <Exec Command="dotnet t4 'StratumRootAttribute.tt' -p=Major=$(MinVerMajor) -p=Minor=$(MinVerMinor) -p=Patch=$(MinVerPatch)" />
   </Target>
 
   <Target Name="GenerateManifest" AfterTargets="ReadManifest" Condition="'$(Configuration)' == 'Release' and '$(TargetFramework)' == 'NET35'">

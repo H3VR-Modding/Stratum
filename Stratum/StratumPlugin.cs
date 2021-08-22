@@ -1,14 +1,12 @@
 ﻿using System.Collections;
 using System.IO;
 using BepInEx;
-using Stratum.Extensions;
 
 namespace Stratum
 {
 	/// <summary>
 	///     A simple implementation of <see cref="IStratumPlugin" />, ready to be inherited
 	/// </summary>
-	[BepInDependency(StratumRoot.GUID, StratumRoot.Version)]
 #pragma warning disable BepInEx001 // This is the responsibility of the inheritor
 	public abstract class StratumPlugin : BaseUnityPlugin, IStratumPlugin
 #pragma warning restore BepInEx001

@@ -11,28 +11,15 @@ namespace Stratum
 	/// <summary>
 	///     The Stratum BepInEx plugin
 	/// </summary>
-	[BepInPlugin(GUID, "Stratum", ExactVersion)]
-	public sealed class StratumRoot : BaseUnityPlugin
+	// if you get a warning that there is no attribute, just build the project
+	public sealed partial class StratumRoot : BaseUnityPlugin
 	{
-		private const string MajorMinorVersion = "1.0.";
-
-		// This is 'Version' but with the patch component not zeroed
-		// People can use 'Version' in their 'BepInDependency's, but not 'ExactVersion', because there is no good reason to depend on the
-		// patch component.
-		// 'Version' should be intentionally rough to prevent people from baking in the full Stratum version in places other than the
-		// dependency attribute too. If a plugin is built on 1.0.0, and 1.0.1 releases, the plugin would still think its 1.0.0 because
-		// 'Version' is a constant.
-		private const string ExactVersion = MajorMinorVersion + "1";
+		private const string Name = "Stratum";
 
 		/// <summary>
 		///     The BepInEx GUID used by Stratum
 		/// </summary>
 		public const string GUID = "stratum";
-
-		/// <summary>
-		///     The version of Stratum with a zeroed patch component. To find the exact version, use the BepInEx API
-		/// </summary>
-		public const string Version = MajorMinorVersion + "0";
 
 		private static readonly DefaultStageEvents SetupEvents = new();
 		private static readonly DefaultStageEvents RuntimeEvents = new();
