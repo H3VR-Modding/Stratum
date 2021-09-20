@@ -50,7 +50,7 @@ namespace Stratum.Jobs
 					throw new KeyNotFoundException($"The plugin '{plugin}' did not have the loader named '{name}'");
 
 				FileSystemInfo handle = Root.GetChild(path) ?? throw
-					new FileNotFoundException($"No file/directory existed at path {path} (root: {Root})");
+					new FileNotFoundException($"No file/directory existed at path {path} (root: {Root}). Maybe the resource was deleted or renamed?");
 
 				return loader(handle);
 			}

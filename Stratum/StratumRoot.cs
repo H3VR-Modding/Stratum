@@ -165,6 +165,8 @@ namespace Stratum
 					}
 				}
 
+				builder.AppendLine().Append(args.Exception);
+
 				Logger.LogError(builder.ToString());
 			}
 
