@@ -8,7 +8,7 @@ using BepInEx;
 
 namespace Stratum
 {
-    [BepInPlugin(GUID, Name, "1.0.2")]
+    [BepInPlugin(GUID, Name, "1.1.1")]
 	public sealed partial class StratumRoot
 	{
 		// People can use 'Version' in their 'BepInDependency's, but not 'ExactVersion', because there is no good reason to depend on the
@@ -18,6 +18,6 @@ namespace Stratum
 		/// <summary>
 		///     The version of Stratum with a zeroed patch component. To find the exact version, use the BepInEx API
 		/// </summary>
-		public const string Version = "1.0.0";
+		public const string Version = "1.1.0";
 	}
 }
